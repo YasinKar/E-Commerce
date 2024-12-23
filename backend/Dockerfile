@@ -1,5 +1,7 @@
 FROM python:3.12.1-alpine
 
+RUN apk add --no-cache postgresql-dev gcc musl-dev
+
 WORKDIR /app
 
 ENV PYTHONDONTWRITEBYTECODE 1

@@ -17,9 +17,8 @@ services:
       - ./backend/.env
     ports:
       - "5432:5432"
-    restart: always
     volumes:
-      - ./backend/data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
 
   pgadmin:
     container_name: pgadmin
@@ -30,7 +29,7 @@ services:
       - "5050:80"
     env_file:
       - ./backend/.env
-    restart: always
+    restart: unless-stopped
 
   backend:
     image: backend
@@ -70,3 +69,6 @@ services:
       - "5555:5555"
     environment:
       - CELERY_BROKER_URL=amqp://guest:guest@rabbitmq:5672/
+
+volumes:
+  postgres_data:
