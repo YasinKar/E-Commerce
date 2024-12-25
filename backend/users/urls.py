@@ -4,8 +4,6 @@ from .views import (
     ActivateAccountView,
     ForgotPasswordAPIView,
     ResetPasswordAPIView,
-    # DashboardAPIView,
-    ChangeEmailAPIView
 )
 
 from rest_framework_simplejwt.views import (
@@ -20,6 +18,4 @@ urlpatterns = [
     path('activate/<str:auth_code>', ActivateAccountView.as_view(), name='activate-account'),
     path('forgot-password/', ForgotPasswordAPIView.as_view(), name='forgot-password'),
     path('reset-password/<str:auth_code>', ResetPasswordAPIView.as_view(), name='rest-password'),
-    # path('dashboard/', DashboardAPIView.as_view(), name='dashboard'),
-    path('change-email/<str:token>', ChangeEmailAPIView.as_view(), name='change-email'),
 ]

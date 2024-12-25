@@ -3,7 +3,7 @@ from rest_framework.validators import UniqueValidator
 from django.core.validators import EmailValidator
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.password_validation import validate_password
-from django.core.exceptions import ValidationError as DjangoValidationError
+from django.core.exceptions import ValidationError
 from django.utils.crypto import get_random_string
 from .tasks import send_email_task
 from .models import User
@@ -48,7 +48,7 @@ class RegisterSerializer(serializers.ModelSerializer):
         
         try:
             validate_password(attrs['password'])
-        except DjangoValidationError as e:
+        except ValidationError as e:
             raise serializers.ValidationError({'password': 'Please choose a secure password with at least 8 characters.'})
 
         return attrs
@@ -100,14 +100,12 @@ class ResetPasswordSerializer(serializers.Serializer):
         
         try:
             validate_password(attrs['password'])
-        except DjangoValidationError as e:
+        except ValidationError as e:
             raise serializers.ValidationError({'password': 'Please choose a secure password with at least 8 characters.'})
 
         return attrs
-
-# class UserSerializer(serializers.ModelSerializer):
-#     projects = ProjectSerializer(many=True, read_only=True)
-
-#     class Meta:
-#         model = User
-#         fields = ['username', 'email', 'first_name', 'last_name', 'date_joined', 'is_active', 'is_staff', 'projects']
+    
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = '__all__'

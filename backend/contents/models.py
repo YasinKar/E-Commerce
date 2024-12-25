@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.validators import RegexValidator
+from django.conf import settings
 
 class SiteSetting(models.Model):
     domain = models.CharField(max_length=300, verbose_name='Domain')

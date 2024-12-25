@@ -1,0 +1,135 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis:7.0.11-alpine
+    volumes:
+      - redis_data:/data
+    networks:
+      - backend_network
+
+  rabbitmq:
+    image: rabbitmq:management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - backend_network
+    restart: always
+
+  db:
+    image: postgres:13-alpine
+    container_name: postgres
+    environment:
+      POSTGRES_NAME: ${POSTGRES_NAME}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - backend_network
+    restart: always
+
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    depends_on:
+      - db
+    ports:
+      - "5050:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+    restart: always
+    networks:
+      - backend_network
+
+  backend:
+    image: backend:latest
+    container_name: backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    command: sh -c "python manage.py migrate && gunicorn backend.wsgi:application --bind 0.0.0.0:8000"
+    volumes:
+      - ./backend:/app/
+    ports:
+      - "8000:8000"
+    environment:
+      SECRET_KEY: ${SECRET_KEY}
+      DEBUG: 0
+      ALLOWED_HOSTS: ${ALLOWED_HOSTS}
+      POSTGRES_NAME: ${POSTGRES_NAME}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_HOST: db
+      POSTGRES_PORT: 5432
+      CORS_ORIGIN_WHITELIST: ${CORS_ORIGIN_WHITELIST}
+      EMAIL_HOST_USER: ${EMAIL_HOST_USER}
+      EMAIL_HOST_PASSWORD: ${EMAIL_HOST_PASSWORD}
+      CELERY_BROKER: amqp://guest:guest@rabbitmq:5672/
+      CELERY_BACKEND: redis://redis:6379/0
+    depends_on:
+      - redis
+      - rabbitmq
+      - db
+    restart: always
+    networks:
+      - backend_network
+
+  celery:
+    image: celery:latest
+    container_name: celery
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    command: celery --app=backend worker -l INFO -Q tasks
+    volumes:
+      - ./backend:/app/
+    environment:
+      SECRET_KEY: ${SECRET_KEY}
+      DEBUG: 0
+      ALLOWED_HOSTS: ${ALLOWED_HOSTS}
+      POSTGRES_NAME: ${POSTGRES_NAME}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_HOST: db
+      POSTGRES_PORT: 5432
+      CORS_ORIGIN_WHITELIST: ${CORS_ORIGIN_WHITELIST}
+      EMAIL_HOST_USER: ${EMAIL_HOST_USER}
+      EMAIL_HOST_PASSWORD: ${EMAIL_HOST_PASSWORD}
+      CELERY_BROKER: amqp://guest:guest@rabbitmq:5672/
+      CELERY_BACKEND: redis://redis:6379/0
+    depends_on:
+      - redis
+      - backend
+      - rabbitmq
+    restart: always
+    networks:
+      - backend_network
+  
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.prod.conf:/etc/nginx/nginx.conf
+      - ./frontend/build:/usr/share/nginx/html
+      - ./static:/usr/share/nginx/html/static
+      - ./media:/usr/share/nginx/html/media
+    depends_on:
+      - backend
+    networks:
+      - backend_network
+    restart: always
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  backend_network:
+    driver: bridge

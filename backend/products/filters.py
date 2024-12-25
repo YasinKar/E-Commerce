@@ -9,10 +9,12 @@ class ProductFilter(django_filters.FilterSet):
     category = django_filters.CharFilter(field_name="category__slug", lookup_expr="iexact")
     brand = django_filters.CharFilter(field_name="brand__slug", lookup_expr="iexact")
     gender = django_filters.ChoiceFilter(field_name="gender", choices=Product.GENDER_CHOICES)
+    color = django_filters.CharFilter(field_name="colors__color_name", lookup_expr="icontains", label="Color")
+    size = django_filters.CharFilter(field_name="sizes__size", lookup_expr="icontains", label="Size")
 
     class Meta:
         model = Product
-        fields = ["min_price", "max_price", "on_sale", "category", "brand", "gender"]
+        fields = ["min_price", "max_price", "on_sale", "category", "brand", "gender", "color", "size"]
 
     def filter_on_sale(self, queryset, name, value):
         if value:

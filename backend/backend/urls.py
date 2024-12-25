@@ -23,9 +23,10 @@ from debug_toolbar.toolbar import debug_toolbar_urls
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('products.urls')),
-    # path('users/', include('users.urls')),
+    path('users/', include('users.urls')),
     path('site/', include('contents.urls')),
-    # path('orders/', include('orders.urls')),
+    path('cart/', include('orders.urls')),
+    path('dashboard/', include('dashboard.urls')),
 ] + debug_toolbar_urls()
 
 if settings.DEBUG:

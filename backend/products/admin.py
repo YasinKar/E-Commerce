@@ -6,7 +6,9 @@ from .models import (
     Product,
     ProductComment,
     ProductImage,
-    ProductInformation
+    ProductInformation,
+    ProductSize,
+    ProductColor
 )
 
 ### Product ###
@@ -18,12 +20,12 @@ class ProductImageBlockInline(admin.TabularInline):
 class ProductInformationBlockInline(admin.TabularInline):
     model = ProductInformation
     extra = 3
-
+    
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     list_display = ('name', 'price', 'category', 'brand', 'gender', 'stars', 'inventory', 'is_active')
-    list_filter = ('name', 'price', 'category', 'brand', 'gender', 'stars', 'inventory', 'is_active', 'tags')
-    search_fields = ('name', 'price', 'category', 'brand', 'gender', 'stars', 'inventory', 'is_active', 'tags')
+    list_filter = ('name', 'price', 'category', 'brand', 'gender', 'stars', 'inventory', 'is_active', 'tags', 'colors', 'sizes')
+    search_fields = ('name', 'price', 'category', 'brand', 'gender', 'stars', 'inventory', 'is_active', 'tags', 'colors', 'sizes')
     list_editable = ('is_active', 'stars')
     exclude = ('slug', )
     

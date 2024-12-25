@@ -1,0 +1,157 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis:7.0.11-alpine
+    container_name: redis
+    networks:
+      - backend_network
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+
+  rabbitmq:
+    image: rabbitmq:management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - backend_network
+
+  db:
+    image: postgres
+    container_name: db
+    environment:
+      - POSTGRES_NAME=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - backend_network
+
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    depends_on:
+      - db
+    ports:
+      - "5050:80"
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@example.com
+      - PGADMIN_DEFAULT_PASSWORD=admin
+    networks:
+      - backend_network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: backend
+    command: sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - ./backend:/app/
+    ports:
+      - "8000:8000"
+    environment:
+      - DEBUG=1
+      - SECRET_KEY=django-insecure-=$3m$a+_xy+sc8+5m8iw*tp=#8tr80mjlt89fy$io6+998lw2!
+      - ALLOWED_HOSTS=*
+      - POSTGRES_NAME=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_HOST=db
+      - POSTGRES_PORT=5432
+      - CORS_ORIGIN_WHITELIST=http://localhost:3000
+      - EMAIL_HOST_USER=email@email.com
+      - EMAIL_HOST_PASSWORD=email
+      - CELERY_BROKER=amqp://guest:guest@rabbitmq:5672/
+      - CELERY_BACKEND=redis://redis:6379/0
+    depends_on:
+      - redis
+      - rabbitmq
+      - db
+    networks:
+      - backend_network
+
+  celery:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: celery
+    command: celery --app=backend worker -l INFO -Q tasks
+    volumes:
+      - ./backend:/app/
+    environment:
+      - DEBUG=1
+      - SECRET_KEY=django-insecure-=$3m$a+_xy+sc8+5m8iw*tp=#8tr80mjlt89fy$io6+998lw2!
+      - ALLOWED_HOSTS=*
+      - POSTGRES_NAME=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_HOST=db
+      - POSTGRES_PORT=5432
+      - CORS_ORIGIN_WHITELIST=http://localhost:3000
+      - EMAIL_HOST_USER=email@email.com
+      - EMAIL_HOST_PASSWORD=email
+      - CELERY_BROKER=amqp://guest:guest@rabbitmq:5672/
+      - CELERY_BACKEND=redis://redis:6379/0
+    depends_on:
+      - redis
+      - rabbitmq
+      - backend
+    networks:
+      - backend_network
+
+  flower:
+    image: mher/flower
+    container_name: flower
+    ports:
+      - "5555:5555"
+    environment:
+      - CELERY_BROKER_URL=amqp://guest:guest@rabbitmq:5672/
+    networks:
+      - backend_network
+
+  frontend:
+    container_name: frontend
+    build:
+      context: ./frontend
+    volumes:
+      - ./frontend:/app
+    ports:
+      - "3000:3000"
+    command: npm run dev
+    environment:
+      - API_URL=api.localhost
+    networks:
+      - backend_network
+    depends_on:
+      - backend
+  
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.dev.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - backend_network
+    restart: always
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  backend_network:
+    driver: bridge

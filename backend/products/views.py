@@ -1,14 +1,12 @@
-from rest_framework import generics
+from rest_framework.generics import ListAPIView, RetrieveAPIView
 from rest_framework.permissions import AllowAny
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from django_filters.rest_framework import DjangoFilterBackend
-
 from django.db.models import Q
 from django.utils import timezone
-
 from .models import Category, Product, Brand, Discount
 from .serializers import ProductSerializer, CategorySerializer, BrandSerializer
 from .filters import ProductFilter
@@ -20,7 +18,7 @@ class ProductListPagination(PageNumberPagination):
     page_size_query_param = 'page_size'
     max_page_size = 50
     
-class ProductListView(generics.ListAPIView):
+class ProductListView(ListAPIView):
     queryset = Product.objects.filter(is_active=True)
     serializer_class = ProductSerializer
     permission_classes = [AllowAny]
@@ -28,7 +26,7 @@ class ProductListView(generics.ListAPIView):
     filter_backends = [DjangoFilterBackend]
     filterset_class = ProductFilter
 
-class ProductDetailView(generics.RetrieveAPIView):
+class ProductDetailView(RetrieveAPIView):
     queryset = Product.objects.filter(is_active=True)
     serializer_class = ProductSerializer
     permission_classes = [AllowAny]
@@ -37,21 +35,21 @@ class ProductDetailView(generics.RetrieveAPIView):
     
 ### Category ###
     
-class CategoryListView(generics.ListAPIView):
+class CategoryListView(ListAPIView):
     queryset = Category.objects.filter(is_active=True)
     serializer_class = CategorySerializer
     permission_classes = [AllowAny]    
     
 ### Brand ###
 
-class BrandListView(generics.ListAPIView):
+class BrandListView(ListAPIView):
     queryset = Brand.objects.filter(is_active=True)
     serializer_class = BrandSerializer
     permission_classes = [AllowAny]     
     
 ### Special sale ###
     
-class SpecialSaleListView(generics.ListAPIView):
+class SpecialSaleListView(ListAPIView):
     serializer_class = ProductSerializer
     permission_classes = [AllowAny]
     pagination_class = ProductListPagination

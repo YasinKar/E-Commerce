@@ -63,6 +63,27 @@ class Brand(models.Model):
     def __str__(self):
         return self.name 
 
+class ProductColor(models.Model):
+    color_name = models.CharField(max_length=100, verbose_name='Color name')
+    color_code = models.CharField(max_length=10, default='#fff', verbose_name='Color code')
+    
+    def __str__(self):
+        return self.color_name
+
+    class Meta:
+        verbose_name = 'Product Color'
+        verbose_name_plural = 'Products Colors'
+        
+class ProductSize(models.Model):
+    size = models.CharField(max_length=100, verbose_name='Size')
+    
+    def __str__(self):
+        return self.size
+
+    class Meta:
+        verbose_name = 'Product Size'
+        verbose_name_plural = 'Products Sizes'
+
 class Product(models.Model):
     GENDER_CHOICES = (
         ('Male', 'Male'),
@@ -78,6 +99,8 @@ class Product(models.Model):
     brand = models.ForeignKey(Brand, on_delete=models.SET_NULL, null = True, blank=True, verbose_name='Brand')
     tags = models.ManyToManyField(ProductTag, blank=True, verbose_name='Tags')
     gender = models.CharField(max_length=100, choices=GENDER_CHOICES ,verbose_name='Gender', default='None')
+    colors = models.ManyToManyField(ProductColor, blank=True, verbose_name='Product colors')
+    sizes = models.ManyToManyField(ProductSize, blank=True, verbose_name='Product sizes')
     slug = models.SlugField(unique=True, verbose_name='Slug')
     stars = models.IntegerField(
         default=1,
