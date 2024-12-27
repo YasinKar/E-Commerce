@@ -7,8 +7,9 @@ from .models import (
     ProductComment,
     ProductImage,
     ProductInformation,
-    ProductSize,
-    ProductColor
+    ProductTag,
+    ProductColor,
+    ProductSize
 )
 
 ### Product ###
@@ -20,6 +21,24 @@ class ProductImageBlockInline(admin.TabularInline):
 class ProductInformationBlockInline(admin.TabularInline):
     model = ProductInformation
     extra = 3
+    
+@admin.register(ProductTag)
+class ProductTagAdmin(admin.ModelAdmin):
+    list_display = ('tag', )
+    list_filter = ('tag', )
+    search_fields = ('tag', )
+    
+@admin.register(ProductColor)
+class ProductColorAdmin(admin.ModelAdmin):
+    list_display = ('color_name', 'color_code')
+    list_filter = ('color_name', 'color_code')
+    search_fields = ('color_name', 'color_code')
+
+@admin.register(ProductSize)
+class ProductSizeAdmin(admin.ModelAdmin):
+    list_display = ('size', )
+    list_filter = ('size', )
+    search_fields = ('size', )
     
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):

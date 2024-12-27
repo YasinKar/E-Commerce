@@ -50,7 +50,7 @@ class SiteSetting(models.Model):
         )]
     )
     email = models.EmailField(max_length=200, verbose_name='Email', null=True, blank=True)
-    copyright = models.CharField(max_length=200, verbose_name='Copyright', null=True, default='&#169;کلیه حقوق محفوظ است')
+    copyright = models.CharField(max_length=200, verbose_name='Copyright', null=True, default='All right reserved ©')
     maintenance_mode = models.BooleanField(default=False, verbose_name='Maintenance mode')
     is_main_setting = models.BooleanField(default=False, verbose_name='Main setting')
      
@@ -69,6 +69,15 @@ class ElectronicSymbol(models.Model):
     class Meta:
         verbose_name = 'Electronic Symbol'
         verbose_name_plural = 'Electronic Symbols'
+
+class Slider(models.Model):
+    image = models.ImageField(upload_to='sliders', verbose_name='Image')
+    url = models.URLField(max_length=300, verbose_name='Url')
+    is_active = models.BooleanField(verbose_name='Active', default=True, db_index=True)
+    
+    class Meta:
+        verbose_name = 'Slider'
+        verbose_name_plural = 'Sliders'
 
 class FAQ(models.Model):
     question = models.TextField(verbose_name='Question')

@@ -1,6 +1,5 @@
 from rest_framework import serializers
 from .models import Category, ProductTag, Brand, Product, ProductImage, ProductInformation, ProductComment, Discount
-from users.models import User
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:

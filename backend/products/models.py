@@ -17,9 +17,6 @@ class Category(models.Model):
         
         if self.parent is None and not self.image:
             raise ValidationError('Uploading an image is mandatory for main categories.')
-        
-        if self.parent is not None and self.image:
-            raise ValidationError('Subcategories do not need an image, please remove the image.')
     
     def __str__(self):
         return self.name
@@ -27,7 +24,7 @@ class Category(models.Model):
     def save(self, *args, **kwargs):
         if not self.pk:
             super().save(*args, **kwargs)
-        self.slug = f"{self.title.replace(' ', '-')}_{self.pk}"
+        self.slug = f"{self.name.replace(' ', '-')}_{self.pk}"
         super().save(*args, **kwargs)
     
     class Meta:
@@ -53,7 +50,7 @@ class Brand(models.Model):
     def save(self, *args, **kwargs):
         if not self.pk:
             super().save(*args, **kwargs)
-        self.slug = f"{self.title.replace(' ', '-')}_{self.pk}"
+        self.slug = f"{self.name.replace(' ', '-')}_{self.pk}"
         super().save(*args, **kwargs)
         
     class Meta:
@@ -123,7 +120,7 @@ class Product(models.Model):
     def save(self, *args, **kwargs):
         if not self.pk:
             super().save(*args, **kwargs)
-        self.slug = f"{self.title.replace(' ', '-')}_{self.pk}"
+        self.slug = f"{self.name.replace(' ', '-')}_{self.pk}"
         super().save(*args, **kwargs)
         
     def get_discounted_price(self):
