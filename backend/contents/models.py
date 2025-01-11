@@ -9,14 +9,14 @@ class SiteSetting(models.Model):
     site_icon = models.ImageField(upload_to='site_icon',null=True, blank=True, verbose_name='Site icon')
     site_about = models.TextField(verbose_name='About us')
     rules = models.TextField(verbose_name='Rules')
-    github = models.URLField(
+    telegram = models.URLField(
         max_length=400,
-        verbose_name='Github',
+        verbose_name='Telegram',
         null=True,
         blank=True,
         validators=[RegexValidator(
-            regex=r'^https://github\.com/.*$',
-            message='Please enter a valid Github URL starting with https://github.com/'
+            regex=r'^https://t\.me/.*$',
+            message='Please enter a valid Telegram URL starting with https://t.me/'
         )]
     )
     twitter = models.URLField(
@@ -50,6 +50,7 @@ class SiteSetting(models.Model):
         )]
     )
     email = models.EmailField(max_length=200, verbose_name='Email', null=True, blank=True)
+    phone = models.IntegerField(verbose_name='Phone', null=True, blank=True)
     copyright = models.CharField(max_length=200, verbose_name='Copyright', null=True, default='All right reserved ©')
     maintenance_mode = models.BooleanField(default=False, verbose_name='Maintenance mode')
     is_main_setting = models.BooleanField(default=False, verbose_name='Main setting')
@@ -92,6 +93,7 @@ class FAQ(models.Model):
         return self.question
    
 class ContactUs(models.Model):
+    full_name = models.CharField(max_length=200, verbose_name='Full Name')
     email = models.EmailField(max_length=200, verbose_name='Email')
     title = models.CharField(max_length=100, verbose_name='Title')
     message = models.TextField(verbose_name='Message')

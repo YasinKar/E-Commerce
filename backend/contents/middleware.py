@@ -1,4 +1,5 @@
-from django.shortcuts import render
+from django.http import JsonResponse
+from rest_framework import status
 from .models import SiteSetting
 
 class MaintenanceModeMiddleware:
@@ -10,7 +11,12 @@ class MaintenanceModeMiddleware:
 
         if site_status and site_status.maintenance_mode:
             if not request.path.startswith('/admin/'):
-                return render(request, 'maintenance.html')
+                response = JsonResponse(
+                    {'message' : 'The service is temporarily unavailable due to maintenance. Please try again later.'},
+                    status=status.HTTP_503_SERVICE_UNAVAILABLE
+                )
+                response.reason_phrase = 'The service is temporarily unavailable due to maintenance. Please try again later.'
+                return response
 
         response = self.get_response(request)
         return response

@@ -3,11 +3,7 @@
 @tailwind utilities;
 
 
-@layer components {
-  body {
-    overflow-x: hidden;
-  }
-
+@layer utilities {
   .hover:hover {
     color: #008cff;
     transition: all 0.4s;
@@ -30,12 +26,29 @@
     scale: 1;
   }
 
-  .title {
-    @apply text-gray-800;
-  }
-  
-  .text {
-    @apply text-neutral-800;
+  .section {
+    @apply space-y-5
   }
 
+  .title {
+    @apply text-black font-bold text-xl sm:text-2xl lg:text-3xl text-center;
+  }
+
+  .text{
+    @apply text-black font-medium text-sm lg:text-lg text-center;
+  }
+
+  .link{
+    @apply text-sky-800 text-sm hover:underline font-medium
+  }
+
+  .error-message{
+    @apply text-red-600 text-center p-1
+  }
+}
+
+@layer base {
+  :root {
+    --radius: 0.5rem;
+  }
 }

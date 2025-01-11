@@ -188,13 +188,19 @@ class ProductComment(models.Model):
         
 class Discount(models.Model):
     category = models.ForeignKey(Category, related_name='discounts', on_delete=models.CASCADE, verbose_name='Category')
-    discount_percentage = models.DecimalField(max_digits=5, decimal_places=2, verbose_name='Discount Percentage')
+    discount_percentage = models.IntegerField(
+        validators=[
+            MaxValueValidator(100),
+            MinValueValidator(1)
+        ],
+        verbose_name='Discount Percentage'
+    )
     start_date = models.DateTimeField(verbose_name='Start Date')
     end_date = models.DateTimeField(verbose_name='End Date')
     is_active = models.BooleanField(default=True, verbose_name='Active')
 
     def __str__(self):
-        return f"{self.discount_percentage}% off for {self.category.title}"
+        return f"{self.discount_percentage}% off for {self.category.name}"
 
     def clean(self):
         if self.start_date >= self.end_date:

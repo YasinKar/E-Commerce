@@ -4,7 +4,7 @@ import { UserRound, ShoppingCart, House, LayoutGrid, CircleHelp } from 'lucide-r
 
 const MobNavbar = () => {
     return (
-        <div className="lg:hidden sticky bottom-0 w-full bg-white py-4 shadow-[rgba(0,0,15,0.5)_0_10px_20px_5px]" dir="rtl">
+        <div className="lg:hidden sticky bottom-0 w-full bg-white py-4 shadow-[rgba(0,0,15,0.5)_0_10px_20px_5px] z-40">
             <div className="flex justify-around">
 
                 <div className="text-gray-500 text-2xl">

@@ -5,7 +5,7 @@ services:
     image: redis:7.0.11-alpine
     container_name: redis
     networks:
-      - backend_network
+      - social_network
     volumes:
       - redis_data:/data
     ports:
@@ -18,7 +18,7 @@ services:
       - "5672:5672"
       - "15672:15672"
     networks:
-      - backend_network
+      - social_network
 
   db:
     image: postgres
@@ -32,7 +32,7 @@ services:
     ports:
       - "5432:5432"
     networks:
-      - backend_network
+      - social_network
 
   pgadmin:
     container_name: pgadmin
@@ -45,7 +45,7 @@ services:
       - PGADMIN_DEFAULT_EMAIL=admin@example.com
       - PGADMIN_DEFAULT_PASSWORD=admin
     networks:
-      - backend_network
+      - social_network
 
   backend:
     build:
@@ -66,7 +66,7 @@ services:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_HOST=db
       - POSTGRES_PORT=5432
-      - CORS_ORIGIN_WHITELIST=http://localhost:3000
+      - CORS_ORIGIN_WHITELIST=http://localhost:3000,http://localhost,http://api.localhost
       - EMAIL_HOST_USER=email@email.com
       - EMAIL_HOST_PASSWORD=email
       - CELERY_BROKER=amqp://guest:guest@rabbitmq:5672/
@@ -76,7 +76,7 @@ services:
       - rabbitmq
       - db
     networks:
-      - backend_network
+      - social_network
 
   celery:
     build:
@@ -95,7 +95,7 @@ services:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_HOST=db
       - POSTGRES_PORT=5432
-      - CORS_ORIGIN_WHITELIST=http://localhost:3000
+      - CORS_ORIGIN_WHITELIST=http://localhost:3000,http://localhost,http://api.localhost
       - EMAIL_HOST_USER=email@email.com
       - EMAIL_HOST_PASSWORD=email
       - CELERY_BROKER=amqp://guest:guest@rabbitmq:5672/
@@ -105,7 +105,7 @@ services:
       - rabbitmq
       - backend
     networks:
-      - backend_network
+      - social_network
 
   flower:
     image: mher/flower
@@ -115,7 +115,7 @@ services:
     environment:
       - CELERY_BROKER_URL=amqp://guest:guest@rabbitmq:5672/
     networks:
-      - backend_network
+      - social_network
 
   frontend:
     container_name: frontend
@@ -127,9 +127,9 @@ services:
       - "3000:3000"
     command: npm run dev
     environment:
-      - API_URL=api.localhost
+      - API_URL=http://api.localhost
     networks:
-      - backend_network
+      - social_network
     depends_on:
       - backend
   
@@ -145,7 +145,7 @@ services:
       - backend
       - frontend
     networks:
-      - backend_network
+      - social_network
     restart: always
 
 volumes:
@@ -153,5 +153,5 @@ volumes:
   redis_data:
 
 networks:
-  backend_network:
+  social_network:
     driver: bridge

@@ -5,10 +5,10 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from django_filters.rest_framework import DjangoFilterBackend
-from django.db.models import Q
+from django.db.models import Q, Prefetch
 from django.utils import timezone
-from .models import Category, Product, Brand, Discount
-from .serializers import ProductSerializer, CategorySerializer, BrandSerializer
+from .models import Category, Product, Brand, Discount, ProductComment
+from .serializers import ProductSerializer, CategorySerializer, BrandSerializer, SimpleProductSerializer
 from .filters import ProductFilter
 
 ### Product ###
@@ -20,14 +20,28 @@ class ProductListPagination(PageNumberPagination):
     
 class ProductListView(ListAPIView):
     queryset = Product.objects.filter(is_active=True)
-    serializer_class = ProductSerializer
+    serializer_class = SimpleProductSerializer
     permission_classes = [AllowAny]
     pagination_class = ProductListPagination   
     filter_backends = [DjangoFilterBackend]
     filterset_class = ProductFilter
 
 class ProductDetailView(RetrieveAPIView):
-    queryset = Product.objects.filter(is_active=True)
+    queryset = Product.objects.select_related('category', 'brand')\
+        .prefetch_related(
+            'tags', 'colors', 'sizes',
+            'images',
+            'information',
+            Prefetch(
+                'comments',
+                queryset=ProductComment.objects.filter(is_active=True).select_related('user').prefetch_related(
+                    Prefetch(
+                        'replies',
+                        queryset=ProductComment.objects.filter(is_active=True).select_related('user')
+                    )
+                )
+            )
+        ).filter(is_active=True)
     serializer_class = ProductSerializer
     permission_classes = [AllowAny]
     

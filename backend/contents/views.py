@@ -3,8 +3,8 @@ from rest_framework.generics import CreateAPIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from rest_framework import status
-from .models import SiteSetting, ElectronicSymbol, ContactUs, FAQ
-from .serializers import SiteSettingSerializer, ElectronicSymbolSerializer, ContactUsSerializer, FAQSerializer
+from .models import SiteSetting, ElectronicSymbol, ContactUs, FAQ, Slider
+from .serializers import SiteSettingSerializer, ElectronicSymbolSerializer, ContactUsSerializer, FAQSerializer, SliderSerializer
 
 class SiteContentsView(APIView):
     """
@@ -18,15 +18,18 @@ class SiteContentsView(APIView):
 
         symbols = ElectronicSymbol.objects.filter(is_active=True)
         faq = FAQ.objects.filter(is_active=True)
+        sliders = Slider.objects.filter(is_active=True)
 
         site_setting_serializer = SiteSettingSerializer(site_setting)
         symbols_serializer = ElectronicSymbolSerializer(symbols, many=True)
         faq_serializer = FAQSerializer(faq, many=True)
+        sliders_serializer = SliderSerializer(sliders, many=True)
 
         return Response({
             "site_settings": site_setting_serializer.data,
             "electronic_symbols": symbols_serializer.data,
             "faq": faq_serializer.data,
+            "sliders": sliders_serializer.data,
         }, status=status.HTTP_200_OK)
         
 class ContactUsView(CreateAPIView):
