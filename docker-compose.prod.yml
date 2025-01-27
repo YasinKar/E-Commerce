@@ -6,7 +6,7 @@ services:
     volumes:
       - redis_data:/data
     networks:
-      - backend_network
+      - general_network
 
   rabbitmq:
     image: rabbitmq:management
@@ -15,7 +15,7 @@ services:
       - "5672:5672"
       - "15672:15672"
     networks:
-      - backend_network
+      - general_network
     restart: always
 
   db:
@@ -28,7 +28,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
-      - backend_network
+      - general_network
     restart: always
 
   pgadmin:
@@ -43,7 +43,7 @@ services:
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
     restart: always
     networks:
-      - backend_network
+      - general_network
 
   backend:
     image: backend:latest
@@ -76,7 +76,7 @@ services:
       - db
     restart: always
     networks:
-      - backend_network
+      - general_network
 
   celery:
     image: celery:latest
@@ -107,8 +107,24 @@ services:
       - rabbitmq
     restart: always
     networks:
-      - backend_network
+      - general_network
   
+  frontend:
+    container_name: frontend
+    build:
+      context: ./frontend
+    volumes:
+      - ./frontend:/app
+    ports:
+      - "3000:3000"
+    command: npm run build
+    environment:
+      - API_URL=http://nginx/api/
+    networks:
+      - general_network
+    depends_on:
+      - backend
+
   nginx:
     image: nginx:latest
     container_name: nginx
@@ -118,12 +134,12 @@ services:
     volumes:
       - ./nginx.prod.conf:/etc/nginx/nginx.conf
       - ./frontend/build:/usr/share/nginx/html
-      - ./static:/usr/share/nginx/html/static
-      - ./media:/usr/share/nginx/html/media
+      - ./backend/static:/usr/share/nginx/html/static
+      - ./backend/media:/usr/share/nginx/html/media
     depends_on:
       - backend
     networks:
-      - backend_network
+      - general_network
     restart: always
 
 volumes:
@@ -131,5 +147,5 @@ volumes:
   redis_data:
 
 networks:
-  backend_network:
+  general_network:
     driver: bridge

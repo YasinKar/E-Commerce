@@ -6,15 +6,29 @@ from rest_framework.response import Response
 from rest_framework import status
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Q, Prefetch
-from django.utils import timezone
-from .models import Category, Product, Brand, Discount, ProductComment
-from .serializers import ProductSerializer, CategorySerializer, BrandSerializer, SimpleProductSerializer
+from .models import (
+    Category,
+    Product,
+    Brand,
+    ProductComment,
+    ProductColor,
+    ProductSize
+)
+from .serializers import (
+    ProductSerializer,
+    CategorySerializer,
+    BrandSerializer,
+    SimpleProductSerializer,
+    ProductColorSerializer,
+    ProductSizeSerializer,
+)
 from .filters import ProductFilter
+from django.utils import timezone
 
 ### Product ###
 
 class ProductListPagination(PageNumberPagination):
-    page_size = 20
+    page_size = 1
     page_size_query_param = 'page_size'
     max_page_size = 50
     
@@ -61,30 +75,25 @@ class BrandListView(ListAPIView):
     serializer_class = BrandSerializer
     permission_classes = [AllowAny]     
     
-### Special sale ###
-    
-class SpecialSaleListView(ListAPIView):
-    serializer_class = ProductSerializer
-    permission_classes = [AllowAny]
-    pagination_class = ProductListPagination
-    
-    def get_queryset(self):
-        active_discounts = Discount.objects.filter(
-            is_active=True,
-            start_date__lte=timezone.now(),
-            end_date__gte=timezone.now()
-        ).values_list('category', flat=True)
+### ProductColor ###
 
-        return Product.objects.filter(
-            category__in=active_discounts,
-            is_active=True
-        )
+class ProductColorListView(ListAPIView):
+    queryset = ProductColor.objects.all()
+    serializer_class = ProductColorSerializer
+    permission_classes = [AllowAny]        
+    
+### ProductSize ###
+
+class ProductSizeListView(ListAPIView):
+    queryset = ProductSize.objects.all()
+    serializer_class = ProductSizeSerializer
+    permission_classes = [AllowAny]     
 
 ### Search ###
 
 class SearchApiView(APIView):
     def post(self, request):
-        searched = request.data.get('search_value')
+        searched = request.data.get('query')
         if searched:
             results = Product.objects.filter(
                 Q(name__icontains=searched) |

@@ -5,7 +5,7 @@ services:
     image: redis:7.0.11-alpine
     container_name: redis
     networks:
-      - social_network
+      - general_network
     volumes:
       - redis_data:/data
     ports:
@@ -18,7 +18,7 @@ services:
       - "5672:5672"
       - "15672:15672"
     networks:
-      - social_network
+      - general_network
 
   db:
     image: postgres
@@ -32,7 +32,7 @@ services:
     ports:
       - "5432:5432"
     networks:
-      - social_network
+      - general_network
 
   pgadmin:
     container_name: pgadmin
@@ -45,7 +45,7 @@ services:
       - PGADMIN_DEFAULT_EMAIL=admin@example.com
       - PGADMIN_DEFAULT_PASSWORD=admin
     networks:
-      - social_network
+      - general_network
 
   backend:
     build:
@@ -76,7 +76,7 @@ services:
       - rabbitmq
       - db
     networks:
-      - social_network
+      - general_network
 
   celery:
     build:
@@ -105,7 +105,7 @@ services:
       - rabbitmq
       - backend
     networks:
-      - social_network
+      - general_network
 
   flower:
     image: mher/flower
@@ -115,7 +115,7 @@ services:
     environment:
       - CELERY_BROKER_URL=amqp://guest:guest@rabbitmq:5672/
     networks:
-      - social_network
+      - general_network
 
   frontend:
     container_name: frontend
@@ -127,31 +127,31 @@ services:
       - "3000:3000"
     command: npm run dev
     environment:
-      - API_URL=http://api.localhost
+      - API_URL=http://nginx/api/
     networks:
-      - social_network
+      - general_network
     depends_on:
       - backend
-  
+
   nginx:
     image: nginx:latest
     container_name: nginx
     ports:
       - "80:80"
-      - "443:443"
     volumes:
       - ./nginx/nginx.dev.conf:/etc/nginx/nginx.conf
+      - ./backend/static:/usr/share/nginx/html/static
+      - ./backend/media:/usr/share/nginx/html/media
     depends_on:
       - backend
       - frontend
     networks:
-      - social_network
-    restart: always
+      - general_network
 
 volumes:
   postgres_data:
   redis_data:
 
 networks:
-  social_network:
+  general_network:
     driver: bridge

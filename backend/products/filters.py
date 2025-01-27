@@ -15,12 +15,3 @@ class ProductFilter(django_filters.FilterSet):
     class Meta:
         model = Product
         fields = ["min_price", "max_price", "on_sale", "category", "brand", "gender", "color", "size"]
-
-    def filter_on_sale(self, queryset, name, value):
-        if value:
-            return queryset.filter(
-                category__discounts__is_active=True,
-                category__discounts__start_date__lte=timezone.now(),
-                category__discounts__end_date__gte=timezone.now(),
-            ).distinct()
-        return queryset

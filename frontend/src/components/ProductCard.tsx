@@ -1,14 +1,19 @@
 import React from 'react'
 import { Product as ProductType } from '../types/product.types'
 import Link from 'next/link'
-import { Heart, MoveRight, ShoppingCart } from 'lucide-react'
+import { Eye, Heart, ShoppingCart } from 'lucide-react'
 import './css/ProductCard.css'
+import Image from 'next/image'
 
-const ProductCard = ({ product }: { product: ProductType }) => {
+type ProductCardProps = {
+    product: ProductType
+}
+
+const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     return (
-        <div className="card text-center p-2 sm:p-4 border border-gray-300 rounded-lg shadow-lg relative space-y-2">
+        <div className="card text-center p-2 sm:p-4 border border-gray-300 rounded-lg shadow-sm relative space-y-1">
             <div className="flex justify-center items-center">
-                <img src={product.image} alt={product.name} className="rounded-lg object-cover h-[200px] w-full" />
+                <Image width={1000} height={1000} src={product.image} alt={product.name} className="rounded-lg object-cover h-[170px] sm:h-[200px] w-full" />
             </div>
 
             <div className="flex items-center justify-center">
@@ -35,13 +40,15 @@ const ProductCard = ({ product }: { product: ProductType }) => {
 
             <div className="card-detail h-0 absolute bottom-0 left-0 right-0 overflow-hidden">
                 <div className="flex flex-col items-center justify-center h-full space-y-5 font-medium text-xs sm:text-base">
-                    <button className='transition-colors text-white bg-sky-500 hover:bg-sky-600 px-2 p-1 sm:px-8 sm:py-2 rounded-lg inline-flex items-center ms-2'>
+                    <button className='flex justify-center items-center w-[90%] transition-colors text-white bg-sky-500 hover:bg-sky-600 py-2 rounded-lg'>
                         Add To Cart<ShoppingCart className='ms-1' />
                     </button>
-                    <button className='transition-colors hover:bg-sky-500 hover:text-white border border-sky-500 text-sky-500 px-4 p-1 sm:px-8 sm:py-2 rounded-lg inline-flex items-center ms-2'>
-                        Add To Favorites<Heart className='ms-1' />
+                    <button className='flex justify-center items-center w-[90%] transition-colors text-sky-500 border border-sky-500 hover:bg-sky-500 hover:text-white py-2 rounded-lg'>
+                        Wishlist<Heart className='ms-1' />
                     </button>
-                    <Link href={`product/${product.slug}`} className='link text-sky-500 hover:underline flex items-center'>See Details<MoveRight className='ms-1 arrow' /></Link>
+                    <Link href={`product/${product.slug}`} className='flex justify-center items-center w-[90%] transition-colors text-sky-500 border border-sky-500 hover:bg-sky-500 hover:text-white py-2 rounded-lg'>
+                        See Details<Eye className='ms-1' />
+                    </Link>
                 </div>
             </div>
         </div>

@@ -8,9 +8,13 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
-import { Slider as SliderType } from '@/types/siteContext.types';
+import { Banner } from '@/types/siteContent.types';
 
-const Slider = ({ sliders }: { sliders: SliderType[] }) => {
+type SliderProps = {
+  banners: Banner[]
+}
+
+const Slider: React.FC<SliderProps> = ({ banners }) => {
   return (
     <Swiper
       modules={[Navigation, Pagination, Autoplay]}
@@ -25,7 +29,7 @@ const Slider = ({ sliders }: { sliders: SliderType[] }) => {
       }}
       className="w-full rounded-lg"
     >
-      {sliders.map((slide) => (
+      {banners.map((slide) => (
         <SwiperSlide key={slide.id}>
           <Link href={slide.url}>
             <div className="relative w-full h-[50vh]">

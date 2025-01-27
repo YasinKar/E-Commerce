@@ -1,8 +1,10 @@
 'use client'
 
-import { Instagram, Linkedin, LoaderCircle, Mail, Phone, Send, Twitter } from 'lucide-react'
-import Link from 'next/link'
 import React, { FormEvent, useState } from 'react'
+import { Instagram, Linkedin, LoaderCircle, Mail, Phone, Send, Twitter } from 'lucide-react'
+import { ContactUs } from '@/utils/actions/content.actions'
+import Link from 'next/link'
+import Swal from 'sweetalert2'
 
 const ContactForm = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -15,11 +17,17 @@ const ContactForm = () => {
 
     try {
       const formData = new FormData(event.currentTarget)
-      fetch('hyzdf')
+      const formObject = Object.fromEntries(formData.entries());
 
-    } catch {
-      setError('Failed to create account. Please try again.')
-      console.error(error)
+      await ContactUs(formObject)
+      Swal.fire({
+        title: 'Success',
+        text: 'Your message successfully received !',
+        icon: 'success',
+        confirmButtonText: 'Done'
+      })
+    } catch (error: any) {
+      setError(error?.message)
     } finally {
       setIsLoading(false)
     }
@@ -27,9 +35,8 @@ const ContactForm = () => {
   return (
     <section className='section'>
       <h2 className='title'>Contact Us</h2>
-
       <div className='flex flex-col sm:flex-row items-center justify-center space-y-10'>
-        <form onSubmit={handelSubmit} className='w-full space-y-5 flex-1'>
+        <form onSubmit={handelSubmit} className='w-full space-y-3 flex-1'>
           {/* Fullname  */}
           <div className="w-full">
             <div className="relative">
@@ -81,6 +88,7 @@ const ContactForm = () => {
             }
           </button>
         </form >
+
         <div className='flex-1 flex flex-col justify-center items-center space-y-10'>
           <p className='flex text items-center'>
             <Mail className='mr-1' />Email@gmail.com

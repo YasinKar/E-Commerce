@@ -7,7 +7,7 @@ class SiteSettingSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'domain', 'site_name',
             'site_logo', 'site_icon', 'site_about',
-            'rules', 'github', 'twitter',
+            'rules', 'twitter', 'telegram',
             'linkedin', 'instagram', 'email',
             'copyright',
         ]

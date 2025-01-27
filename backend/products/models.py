@@ -61,7 +61,7 @@ class Brand(models.Model):
         return self.name 
 
 class ProductColor(models.Model):
-    color_name = models.CharField(max_length=100, verbose_name='Color name')
+    color_name = models.CharField(max_length=100, verbose_name='Color name', unique=True)
     color_code = models.CharField(max_length=10, default='#fff', verbose_name='Color code')
     
     def __str__(self):
@@ -72,7 +72,7 @@ class ProductColor(models.Model):
         verbose_name_plural = 'Products Colors'
         
 class ProductSize(models.Model):
-    size = models.CharField(max_length=100, verbose_name='Size')
+    size = models.CharField(max_length=100, verbose_name='Size', unique=True)
     
     def __str__(self):
         return self.size
@@ -89,7 +89,7 @@ class Product(models.Model):
     )
     
     name = models.CharField(max_length=300, verbose_name='Name')
-    price = models.IntegerField(verbose_name='Price')
+    price = models.IntegerField(verbose_name='Price', validators=[MaxValueValidator(10000000),MinValueValidator(0)])
     image = models.ImageField(upload_to='products', verbose_name='Image')
     description = models.TextField(max_length=800, verbose_name='Description')  
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null = True, blank=True, verbose_name='Category')

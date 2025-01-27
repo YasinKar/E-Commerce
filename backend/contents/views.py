@@ -1,5 +1,5 @@
 from rest_framework.views import APIView
-from rest_framework.generics import CreateAPIView
+from rest_framework.generics import CreateAPIView, ListAPIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from rest_framework import status
@@ -18,19 +18,21 @@ class SiteContentsView(APIView):
 
         symbols = ElectronicSymbol.objects.filter(is_active=True)
         faq = FAQ.objects.filter(is_active=True)
-        sliders = Slider.objects.filter(is_active=True)
 
         site_setting_serializer = SiteSettingSerializer(site_setting)
         symbols_serializer = ElectronicSymbolSerializer(symbols, many=True)
         faq_serializer = FAQSerializer(faq, many=True)
-        sliders_serializer = SliderSerializer(sliders, many=True)
 
         return Response({
             "site_settings": site_setting_serializer.data,
             "electronic_symbols": symbols_serializer.data,
-            "faq": faq_serializer.data,
-            "sliders": sliders_serializer.data,
+            "faq": faq_serializer.data
         }, status=status.HTTP_200_OK)
+  
+class SiteBannersView(ListAPIView):
+    queryset = Slider.objects.filter(is_active=True)
+    serializer_class = SliderSerializer
+    permission_classes = [AllowAny]
         
 class ContactUsView(CreateAPIView):
     """

@@ -11,9 +11,7 @@ export default async function RootLayout({ children, }: Readonly<{ children: Rea
         <TopNav />
         <NavBar />
       </header>
-      <main className="container relative my-8 space-y-10 z-10">
-        {children}
-      </main>
+      {children}
       <Footer />
       <MobNavbar />
     </>

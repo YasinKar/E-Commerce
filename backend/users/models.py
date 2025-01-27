@@ -12,7 +12,7 @@ class User(AbstractUser):
     REQUIRED_FIELDS = ['username']
 
     def __str__(self):
-        return f'User {self.username} Eamil : {self.email} {'Active' if self.is_active else 'Inactive'}'
+        return self.username
     
     class Meta:
         verbose_name = 'User'

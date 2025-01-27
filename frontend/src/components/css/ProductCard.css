@@ -6,11 +6,3 @@
 .card:hover .card-detail {
     height: 100%;
 }
-
-.arrow {
-    transition: all 0.2s ease-in;
-}
-
-.link:hover .arrow {
-    margin-inline-start: 0.7rem;
-}
