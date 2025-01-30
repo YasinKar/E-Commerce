@@ -3,6 +3,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.core.exceptions import ValidationError
 from users.models import User
 from django.utils import timezone
+from colorfield.fields import ColorField
 
 class Category(models.Model):
     name = models.CharField(max_length=200, verbose_name='Category')
@@ -62,7 +63,7 @@ class Brand(models.Model):
 
 class ProductColor(models.Model):
     color_name = models.CharField(max_length=100, verbose_name='Color name', unique=True)
-    color_code = models.CharField(max_length=10, default='#fff', verbose_name='Color code')
+    color_code = ColorField(format="hexa", default='#fff', verbose_name='Color code')
     
     def __str__(self):
         return self.color_name

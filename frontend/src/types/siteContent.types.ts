@@ -4,7 +4,7 @@ export interface Banner {
     image: string
 }
 
-export interface Settings {
+export interface siteSettings {
     id: string
     domain: string
     site_name: string
@@ -29,10 +29,4 @@ export interface electronicSymbol {
     id: number;
     url: string
     image: string
-}
-
-export interface SiteContent {
-    site_settings: Settings
-    faq: FAQ[]
-    electronic_symbols: electronicSymbol[]
 }

@@ -4,7 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 from orders.models import UserAddress, Cart
-from orders.serializers import UserAddressSerializer
+from orders.serializers import UserAddressSerializer, CartSerializer
 from users.models import EmailChangeRequest
 from users.serializers import UserSerializer
 
@@ -16,14 +16,14 @@ class DashboardAPIView(APIView):
     def get(self, request):
         user = request.user
         user_orders = Cart.objects.filter(user=user, is_paid=True)\
-            .select_related('off_code', 'address')\
+            .select_related('offer_code', 'address')\
                 .prefetch_related('orders', 'orders__product', 'orders__size', 'orders__color')
         user_addresses = UserAddress.objects.filter(user=user)
                 
         data = {
-            user : UserSerializer(user).data,
-            user_orders : UserSerializer(user_orders).data,
-            user_addresses : UserAddressSerializer(user_addresses).data
+            "user" : UserSerializer(user).data,
+            "user_orders" : CartSerializer(user_orders, many=True).data,
+            "user_addresses" : UserAddressSerializer(user_addresses, many=True).data
         }
         
         return Response(data, status=status.HTTP_200_OK)
@@ -72,7 +72,9 @@ class ChangeEmailAPIView(APIView):
     permission_classes = [IsAuthenticated]
     
     def get(self, request, token):
-        email_change_request = get_object_or_404(EmailChangeRequest, token=token)
+        email_change_request = EmailChangeRequest.objects.filter(token=token)
+        if not email_change_request:
+            Response({"error": "The EmailChangeRequest was not found"}, status=status.HTTP_404_NOT_FOUND)
 
         if email_change_request.confirmed:
             return Response({"detail": "Email has already been confirmed."}, status=status.HTTP_200_OK)

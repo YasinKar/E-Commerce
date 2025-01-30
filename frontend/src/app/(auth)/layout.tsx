@@ -1,17 +1,25 @@
 import React from "react";
 import Image from "next/image";
+import { getSettings } from "@/utils/actions/content.actions";
 
-const Layout = ({ children }: { children: React.ReactNode }) => {
+const Layout = async ({ children }: { children: React.ReactNode }) => {
+  const settings = await getSettings();
+
   return (
     <div className="flex min-h-screen">
       <section className="hidden w-1/2 items-center justify-center bg-sky-500 p-10 lg:flex flex-col space-y-5">
         <h1 className="title">
-          E commerce
+          <Image
+            src={settings.site_logo}
+            alt="Logo"
+            width={110}
+            height={110}
+          />
         </h1>
-        <p className="text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Vero quam sed praesentium nisi quos mollitia facilis voluptatum, laudantium culpa. Asperiores, minus sed vero culpa quod qui labore nostrum. Corporis, reiciendis.</p>
+        <p className="text-white font-medium text-sm lg:text-lg text-center">{settings.site_about}</p>
         <Image
           src='/assets/images/e-commerce.png'
-          alt="sdsdss"
+          alt="E-commerce"
           width={300}
           height={300}
         />

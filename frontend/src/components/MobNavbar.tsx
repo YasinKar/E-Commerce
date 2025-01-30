@@ -1,8 +1,13 @@
+'use client'
+
 import Link from 'next/link'
-import React from 'react'
-import { UserRound, ShoppingCart, House, LayoutGrid, CircleHelp } from 'lucide-react'
+import React, { useContext } from 'react'
+import { UserRound, ShoppingCart, House, LayoutGrid } from 'lucide-react'
+import { AuthContext, AuthContextType } from '@/context/AuthContext'
 
 const MobNavbar = () => {
+    const { user } = useContext(AuthContext) as AuthContextType
+
     return (
         <div className="lg:hidden sticky bottom-0 w-full bg-white py-4 shadow-[rgba(0,0,15,0.5)_0_10px_20px_5px] z-40">
             <div className="flex justify-around">
@@ -29,13 +34,7 @@ const MobNavbar = () => {
                 </div>
 
                 <div className="text-gray-500 text-2xl">
-                    <Link href='/about'>
-                        <CircleHelp />
-                    </Link>
-                </div>
-
-                <div className="text-gray-500 text-2xl">
-                    <Link href='/login' className="flex flex-col items-center">
+                    <Link href={user ? '/dashboard' : '/register'} className="flex flex-col items-center">
                         <UserRound />
                     </Link>
                 </div>

@@ -22,7 +22,7 @@ class OrderSerializer(serializers.ModelSerializer):
 
 class CartSerializer(serializers.ModelSerializer):
     address = UserAddressSerializer(read_only=True)
-    orders = OrderSerializer(many=True, read_only=True, source='orders')
+    orders = OrderSerializer(many=True, read_only=True)
     total_amount = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True, source='get_total_amount')
 
     class Meta:

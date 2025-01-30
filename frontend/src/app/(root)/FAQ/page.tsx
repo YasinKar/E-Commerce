@@ -1,13 +1,13 @@
 import React from 'react'
 import FAQ from '@/components/FAQ';
-import { getContents } from '@/utils/actions/content.actions';
+import { getFAQ } from '@/utils/actions/content.actions';
 
 const FAQPage = async () => {
-  const context = await getContents()
+  const faq = await getFAQ()
 
   return (
     <main className='container my-8'>
-      <FAQ faq={context.faq} />
+      <FAQ faq={faq} />
     </main>
   )
 }

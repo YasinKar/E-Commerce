@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('SECRET_KEY')
+SECRET_KEY = "os.environ.get('SECRET_KEY')"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', '0') == '1'
@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'debug_toolbar',
     'django_filters',
     'axes',
+    'colorfield',
     
     # internal apps
     'contents',
@@ -184,7 +185,7 @@ AXES_LOG_ATTEMPT_LIMIT = 100
 
 # CORS_ORIGIN_ALLOW_ALL = True
 
-CORS_ORIGIN_WHITELIST = os.environ.get('CORS_ORIGIN_WHITELIST').split(',')
+# CORS_ORIGIN_WHITELIST = os.environ.get('CORS_ORIGIN_WHITELIST').split(',')
 
 #email setting
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

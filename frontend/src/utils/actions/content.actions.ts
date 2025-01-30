@@ -2,9 +2,9 @@
 
 import api from '@/utils/api/index'
 
-export const getContents = async () => {
-    const products = await api.get('site/contents/');
-    return products;
+export const getSettings = async () => {
+    const settings = await api.get('site/settings/');
+    return settings;
 }
 
 export const getBanners = async () => {
@@ -12,7 +12,17 @@ export const getBanners = async () => {
     return banners
 }
 
-export const ContactUs = async (data: object) => {
-    const contact = await api.post('site/contact-us/', data)
+export const getFAQ = async () => {
+    const FAQ = await api.get('site/FAQ/');
+    return FAQ;
+}
+
+export const getElectronicSymbols = async () => {
+    const ElectronicSymbols = await api.get('site/electronic-symbols/');
+    return ElectronicSymbols;
+}
+
+export const ContactUs = async (fullName: string, email: string, title: string, message: string) => {
+    const contact = await api.post('site/contact-us/', { full_name: fullName, email, title, message })
     return contact
 }

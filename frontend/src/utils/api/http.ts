@@ -1,6 +1,7 @@
 import axios, { InternalAxiosRequestConfig } from 'axios';
+import { deleteCookie, getCookie, setCookie } from 'cookies-next';
 import { jwtDecode } from "jwt-decode";
-// import { useRouter } from "next/navigation";
+import { cookies } from 'next/headers';
 
 export const API_BASE_URL = process.env.API_URL
 
@@ -23,36 +24,49 @@ const http = axios.create({
   baseURL: API_BASE_URL,
 });
 
-// http.interceptors.request.use(async (config: InternalAxiosRequestConfig) => {
-//   const authTokensString = window.localStorage.getItem("authTokens");
+http.interceptors.request.use(async (config: InternalAxiosRequestConfig) => {
+  const cookieStore = await cookies()
 
-//   if (!authTokensString) return config;
+  const authTokensString = cookieStore.get('authTokens')?.value
 
-//   const authTokens = JSON.parse(authTokensString);
+  if (!authTokensString) return config;
 
-//   if (!authTokens.access) return config;
+  let authTokens;
+  try {
+    authTokens = JSON.parse(authTokensString as string);
+  } catch (error) {
+    console.error("Invalid authTokens cookie:", error);
+    deleteCookie("authTokens");
+    return config;
+  }
 
-//   // const router = useRouter();
+  if (!authTokens.access) return config;
 
-//   if (!isTokenValid(authTokens.access)) {
-//     try {
-//       const response = await http.post("token/refresh/", {
-//         refresh: authTokens.refresh,
-//       });
-//       localStorage.setItem("authTokens", JSON.stringify(response.data));
-//       authTokens.access = response.data.access;
-//     } catch (error) {
-//       console.error("Failed to refresh token:", error);
-//       // router.push("/login");
-//       throw error;
-//     }
-//   }
+  if (!isTokenValid(authTokens.access)) {
+    try {
+      const response = await http.post("token/refresh/", {
+        refresh: authTokens.refresh,
+      });
 
-//   if (config?.headers) {
-//     config.headers.Authorization = `Bearer ${authTokens.access}`;
-//   }
+      authTokens.access = response.data.access;
+      setCookie("authTokens", JSON.stringify(authTokens), {
+        maxAge: 30 * 24 * 60 * 60,
+      });
+    } catch (error) {
+      console.error("Failed to refresh token:", error);
+      deleteCookie("authTokens");
+      if (typeof window !== "undefined") {
+        window.location.href = "/login";
+      }
+      throw error;
+    }
+  }
 
-//   return config;
-// });
+  if (config?.headers) {
+    config.headers.Authorization = `Bearer ${authTokens.access}`;
+  }
+
+  return config;
+});
 
 export default http;

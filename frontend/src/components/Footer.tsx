@@ -1,7 +1,13 @@
+import { electronicSymbol, siteSettings } from '@/types/siteContent.types'
 import Link from 'next/link'
 import React from 'react'
 
-const Footer = () => {
+type FooterProps = {
+    electronicSymbols: electronicSymbol[]
+    settings: siteSettings
+}
+
+const Footer: React.FC<FooterProps> = ({ electronicSymbols, settings }) => {
     return (
         <footer className="bg-white border-t border-gray-300">
             <div className="mx-auto w-full max-w-screen-xl">

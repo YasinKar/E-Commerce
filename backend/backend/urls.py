@@ -31,8 +31,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 ] + debug_toolbar_urls()
 
-admin.site.site_header = 'Admin'
-admin.site.index_title = 'Admin'
+admin.site.site_header = 'Admin Dashboard'
+# admin.site.index_title = ''
 admin.site.site_title = 'Admin'
 
 if settings.DEBUG:

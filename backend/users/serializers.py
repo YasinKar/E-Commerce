@@ -67,12 +67,12 @@ class RegisterSerializer(serializers.ModelSerializer):
             'user': user,
         }
         
-        send_email_task.delay(
-            subject='Account Activation',
-            to=validated_data['email'],
-            context=email_context,
-            template_name='email/activate_account.html',
-        )
+        # send_email_task.delay(
+        #     subject='Account Activation',
+        #     to=validated_data['email'],
+        #     context=email_context,
+        #     template_name='email/activate_account.html',
+        # )
             
         user.save()
 
@@ -108,4 +108,4 @@ class ResetPasswordSerializer(serializers.Serializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = '__all__'
+        fields = ['id', 'username', 'first_name', 'last_name', 'email', 'is_staff', 'is_active', 'date_joined']
