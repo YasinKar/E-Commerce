@@ -1,5 +1,5 @@
 import axios, { InternalAxiosRequestConfig } from 'axios';
-import { deleteCookie, getCookie, setCookie } from 'cookies-next';
+import { deleteCookie, setCookie } from 'cookies-next';
 import { jwtDecode } from "jwt-decode";
 import { cookies } from 'next/headers';
 
@@ -36,7 +36,7 @@ http.interceptors.request.use(async (config: InternalAxiosRequestConfig) => {
     authTokens = JSON.parse(authTokensString as string);
   } catch (error) {
     console.error("Invalid authTokens cookie:", error);
-    deleteCookie("authTokens");
+    await deleteCookie("authTokens");
     return config;
   }
 
@@ -49,12 +49,12 @@ http.interceptors.request.use(async (config: InternalAxiosRequestConfig) => {
       });
 
       authTokens.access = response.data.access;
-      setCookie("authTokens", JSON.stringify(authTokens), {
+      await setCookie("authTokens", JSON.stringify(authTokens), {
         maxAge: 30 * 24 * 60 * 60,
       });
     } catch (error) {
       console.error("Failed to refresh token:", error);
-      deleteCookie("authTokens");
+      await deleteCookie("authTokens");
       if (typeof window !== "undefined") {
         window.location.href = "/login";
       }

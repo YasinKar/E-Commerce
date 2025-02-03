@@ -2,13 +2,15 @@ import { isAxiosError } from 'axios';
 import http from './http';
 
 interface ErrorResponse {
-    [key: string]: string[];
-  }
+    [key: string]: string[] | string;
+}
 
 function handleError(err: any) {
     if (isAxiosError(err)) {
         console.error(err.response?.data);
-        throw new Error(Object.values(err.response?.data as ErrorResponse)[0]?.[0] || 'An unexpected error occurred');
+        const errorData = Object.values(err.response?.data as ErrorResponse)[0];
+        const errorMessage = Array.isArray(errorData) ? errorData[0] : errorData;
+        throw new Error(errorMessage || 'An unexpected error occurred');
     } else {
         console.error('An unexpected error occurred')
         throw new Error('An unexpected error occurred');

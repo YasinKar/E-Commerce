@@ -55,7 +55,7 @@ class UserAddress(models.Model):
     def clean(self):
         phone_regex = re.compile(r'^(?:\+98|0098|98|0)?9\d{9}$')
         if self.receiver_phone and not re.match(phone_regex, self.receiver_phone):
-            raise ValidationError({'phone': 'receiver phone is not valid.'})
+            raise ValidationError({'receiver_phone': 'receiver phone is not valid.'})
         
     class Meta:
         verbose_name = 'User Address'
@@ -75,7 +75,7 @@ class Cart(models.Model):
     offer_code = models.ForeignKey(OfferCode, null=True, blank=True, on_delete=models.SET_NULL, verbose_name='Offer Code')
     is_paid = models.BooleanField(default=False, verbose_name = 'Is paid')
     paid = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, verbose_name='Paid')
-    paid_date = models.DateField(null=True, blank=True, auto_now_add=True, verbose_name='Paid date')
+    paid_date = models.DateField(null=True, blank=True, verbose_name='Paid date')
     
     def __str__(self):
         return f'User : {self.user} Status: {self.status}'      
@@ -91,8 +91,8 @@ class Cart(models.Model):
 
         category_discounts = self.get_category_discounts()
 
-        if self.off_code and self.off_code.is_valid():
-            discount_amount = (total_amount * self.off_code.discount_percentage) / 100
+        if self.offer_code and self.offer_code.is_valid():
+            discount_amount = (total_amount * self.offer_code.discount_percentage) / 100
             total_amount -= discount_amount
 
         if category_discounts:

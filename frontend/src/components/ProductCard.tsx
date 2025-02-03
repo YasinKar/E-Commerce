@@ -1,15 +1,38 @@
+'use client'
+
 import React from 'react'
 import { Product as ProductType } from '../types/product.types'
 import Link from 'next/link'
 import { Eye, Heart, ShoppingCart } from 'lucide-react'
 import './css/ProductCard.css'
 import Image from 'next/image'
+import { addOrder } from '@/utils/actions/cart.actions'
+import Swal from 'sweetalert2'
 
 type ProductCardProps = {
     product: ProductType
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
+    const handleAddOrder = async (id: number, count: number) => {
+        try {
+            const res = await addOrder(id, count)
+            Swal.fire({
+                title: 'Added Order',
+                text: Object.values(res)[0] as string,
+                icon: 'success',
+                confirmButtonText: 'Done'
+            })
+        } catch (error: any) {
+            Swal.fire({
+                title: 'Unsuccessful',
+                text: error?.message,
+                icon: 'error',
+                confirmButtonText: 'Done'
+            })
+        }
+    }
+
     return (
         <div className="card text-center p-2 sm:p-4 border border-gray-300 rounded-lg shadow-sm relative space-y-1">
             <div className="flex justify-center items-center">
@@ -40,7 +63,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
             <div className="card-detail h-0 absolute bottom-0 left-0 right-0 overflow-hidden">
                 <div className="flex flex-col items-center justify-center h-full space-y-5 font-medium text-xs sm:text-base">
-                    <button className='flex justify-center items-center w-[90%] transition-colors text-white bg-sky-500 hover:bg-sky-600 py-2 rounded-lg'>
+                    <button onClick={() => handleAddOrder(product.id, 1)} className='flex justify-center items-center w-[90%] transition-colors text-white bg-sky-500 hover:bg-sky-600 py-2 rounded-lg'>
                         Add To Cart<ShoppingCart className='ms-1' />
                     </button>
                     <button className='flex justify-center items-center w-[90%] transition-colors text-sky-500 border border-sky-500 hover:bg-sky-500 hover:text-white py-2 rounded-lg'>

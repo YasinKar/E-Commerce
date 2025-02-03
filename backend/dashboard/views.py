@@ -1,34 +1,31 @@
-from rest_framework.generics import CreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.generics import CreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
+from .models import Message
+from .serializers import MessageSerializer
 from orders.models import UserAddress, Cart
 from orders.serializers import UserAddressSerializer, CartSerializer
 from users.models import EmailChangeRequest
 from users.serializers import UserSerializer
+from django.shortcuts import get_object_or_404
 
 #### Dashboard ####
 
-class DashboardAPIView(APIView):
+class UserAccountAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
         user = request.user
-        user_orders = Cart.objects.filter(user=user, is_paid=True)\
-            .select_related('offer_code', 'address')\
-                .prefetch_related('orders', 'orders__product', 'orders__size', 'orders__color')
-        user_addresses = UserAddress.objects.filter(user=user)
-                
+ 
         data = {
             "user" : UserSerializer(user).data,
-            "user_orders" : CartSerializer(user_orders, many=True).data,
-            "user_addresses" : UserAddressSerializer(user_addresses, many=True).data
         }
         
         return Response(data, status=status.HTTP_200_OK)
 
-    def post(self, request):
+    def put(self, request):
             user = request.user
             serializer = UserSerializer(user, data=request.data, partial=True)
 
@@ -43,14 +40,40 @@ class DashboardAPIView(APIView):
                     email_context ={
                         'email_change_request' : email_change_request,
                     }
-                    email_change_request.send_confirmation_email(email_context)
+                    # email_change_request.send_confirmation_email(email_context)
                     
                     del serializer.validated_data['email'] # save other changes but email
                     serializer.save()
-                    return Response({"detail": "Confirmation email sent. Please confirm to change your email."}, status=status.HTTP_200_OK)
+                    return Response({"message": "Confirmation email sent. Please confirm to change your email."}, status=status.HTTP_200_OK)
                 serializer.save()
-                return Response({"detail": "Profile updated successfully."}, status=status.HTTP_200_OK)
+                return Response({"message": "Profile updated successfully."}, status=status.HTTP_200_OK)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class UserMessageListView(ListAPIView):
+    serializer_class = MessageSerializer
+    permission_classes = [IsAuthenticated]    
+
+    def get_queryset(self):
+        messages = Message.objects.filter(user=self.request.user)
+        return messages
+    
+class UserOrderListView(ListAPIView):
+    serializer_class = CartSerializer
+    permission_classes = [IsAuthenticated]    
+
+    def get_queryset(self):
+        user_orders = Cart.objects.filter(user=self.request.user, is_paid=True)\
+            .select_related('offer_code', 'address')\
+                .prefetch_related('orders', 'orders__product', 'orders__size', 'orders__color')
+        return user_orders
+    
+class UserAddressListView(ListAPIView):
+    serializer_class = UserAddressSerializer
+    permission_classes = [IsAuthenticated]    
+
+    def get_queryset(self):
+        user_addresses = UserAddress.objects.filter(user=self.request.user)
+        return user_addresses
 
 class CreateAddressView(CreateAPIView):
     queryset = UserAddress.objects.all()
@@ -61,12 +84,15 @@ class CreateAddressView(CreateAPIView):
         serializer.save(user=self.request.user)
         
 class AddressDetailView(RetrieveUpdateDestroyAPIView):
-    queryset = UserAddress.objects.all()
     serializer_class = UserAddressSerializer
     permission_classes = [IsAuthenticated]
-
+    
     def get_queryset(self):
-        return UserAddress.objects.filter(user=self.request.user)   
+        return UserAddress.objects.filter(user=self.request.user)
+
+    def get_object(self):
+        obj = get_object_or_404(UserAddress, id=self.kwargs["pk"], user=self.request.user)
+        return obj
      
 class ChangeEmailAPIView(APIView):
     permission_classes = [IsAuthenticated]
@@ -77,10 +103,10 @@ class ChangeEmailAPIView(APIView):
             Response({"error": "The EmailChangeRequest was not found"}, status=status.HTTP_404_NOT_FOUND)
 
         if email_change_request.confirmed:
-            return Response({"detail": "Email has already been confirmed."}, status=status.HTTP_200_OK)
+            return Response({"message": "Email has already been confirmed."}, status=status.HTTP_200_OK)
 
         email_change_request.confirmed = True
         email_change_request.apply_email_change()
         email_change_request.save()
         
-        return Response({"detail": "Email has been successfully updated!"}, status=status.HTTP_200_OK)
+        return Response({"message": "Email has been successfully updated!"}, status=status.HTTP_200_OK)

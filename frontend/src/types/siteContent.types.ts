@@ -10,7 +10,7 @@ export interface siteSettings {
     site_name: string
     site_logo: string
     site_icon: string | null
-    site_about: string
+    site_description: string
     rules: string
     twitter: string | null
     linkedin: string | null

@@ -10,10 +10,10 @@ export async function generateMetadata() {
 
   return {
     title: `${settings.site_name} | Home`,
-    description: settings.site_about,
+    description: settings.site_description,
     openGraph: {
       title: `${settings.site_name} | Home`,
-      description: settings.site_about,
+      description: settings.site_description,
       url: `${settings.domain}`,
       images: [{ url: settings.image }],
       type: 'website',

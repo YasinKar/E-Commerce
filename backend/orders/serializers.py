@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import Cart, Order, UserAddress, OfferCode
+from products.serializers import ProductSerializer
 
 class OfferCodeSerializer(serializers.ModelSerializer):
     class Meta:
@@ -12,13 +13,11 @@ class UserAddressSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class OrderSerializer(serializers.ModelSerializer):
-    product_name = serializers.CharField(source='product.name', read_only=True)
-    color_name = serializers.CharField(source='color.name', read_only=True, allow_null=True)
-    size_name = serializers.CharField(source='size.name', read_only=True, allow_null=True)
+    product = ProductSerializer(read_only=True)
 
     class Meta:
         model = Order
-        fields = ['id', 'cart', 'product', 'product_name', 'color', 'color_name', 'size', 'size_name', 'count']
+        fields = ['id', 'cart', 'product', 'color', 'size', 'count']
 
 class CartSerializer(serializers.ModelSerializer):
     address = UserAddressSerializer(read_only=True)

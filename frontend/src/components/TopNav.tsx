@@ -35,9 +35,9 @@ const TopNav: React.FC<TopNavProps> = ({ settings }) => {
                         <Image
                             src={settings.site_logo}
                             alt="Logo"
-                            width={110}
+                            width={80}
                             className='m-auto'
-                            height={110}
+                            height={80}
                         />
                     </Link>
                 </div>

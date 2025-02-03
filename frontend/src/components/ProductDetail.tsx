@@ -1,10 +1,12 @@
 'use client'
 
 import { Product } from '@/types/product.types'
+import { addOrder } from '@/utils/actions/cart.actions'
 import { ShoppingCart, Heart } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import React, { useState } from 'react'
+import Swal from 'sweetalert2'
 
 type ProductDetailProps = {
     product: Product
@@ -14,6 +16,25 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product }) => {
     const [currentImage, setCurrentImage] = useState<string>(product.image)
 
     const [quantity, setQuantity] = useState<number>(1)
+
+    const handleAddOrder = async (id: number, count: number) => {
+        try {
+            const res = await addOrder(id, count)
+            Swal.fire({
+                title: 'Added Order',
+                text: Object.values(res)[0] as string,
+                icon: 'success',
+                confirmButtonText: 'Done'
+            })
+        } catch (error: any) {
+            Swal.fire({
+                title: 'Unsuccessful',
+                text: error?.message,
+                icon: 'error',
+                confirmButtonText: 'Done'
+            })
+        }
+    }
 
     return (
         <div>
@@ -86,12 +107,13 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product }) => {
 
                         <div className="mb-6">
                             <label htmlFor="quantity" className="block text-sm font-medium text-gray-700 mb-1">Quantity:</label>
-                            <input type="number" id="quantity" name="quantity" min="1" value={quantity}
+                            <input type="number" id="quantity" name="quantity" min="1" value={quantity} onChange={e => setQuantity(parseInt(e.target.value, 10))}
                                 className="w-12 text-center rounded-md border-gray-300  shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" />
                         </div>
 
                         <div className="flex space-x-4 mb-6">
                             <button
+                                onClick={() => handleAddOrder(product.id, quantity)}
                                 className="bg-sky-500 flex gap-2 items-center text-white px-6 py-2 rounded-md hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-all">
                                 <ShoppingCart />
                                 Add to Cart

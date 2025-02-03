@@ -16,6 +16,7 @@ export interface AuthContextType {
     user: User | null;
     setUser: React.Dispatch<React.SetStateAction<User | null>>
     signOut: () => void;
+    isLoading : boolean
 }
 
 export const AuthContext = createContext<AuthContextType | null>(null);
@@ -27,10 +28,12 @@ type AuthContextProviderProps = {
 export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
     const [authTokens, setAuthTokens] = useState<authTokensType | null>(null);
     const [user, setUser] = useState<User | null>(null);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
 
     useEffect(() => {
         const initializeAuth = async () => {
             try {
+                setIsLoading(true);
                 const tokens = await getCookie("authTokens");
                 if (tokens) {
                     const parsedTokens = JSON.parse(tokens);
@@ -41,6 +44,8 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
                 console.error("Error parsing authTokens:", error);
                 setAuthTokens(null);
                 setUser(null);
+            } finally {
+                setIsLoading(false)
             }
         };
 
@@ -69,6 +74,7 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
         user,
         setUser,
         signOut,
+        isLoading
     };
 
     return (

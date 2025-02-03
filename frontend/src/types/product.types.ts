@@ -38,7 +38,7 @@ export interface Product {
   slug: string;
   stars: number;
   inventory?: number;
-  discounted_price?: number;
+  discounted_price: number;
   information: { id: number, key: string, value: string }[]
   images: { id: number, image: string }[]
   comments: Comment[]
