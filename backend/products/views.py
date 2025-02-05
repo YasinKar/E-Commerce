@@ -28,7 +28,7 @@ from django.utils import timezone
 ### Product ###
 
 class ProductListPagination(PageNumberPagination):
-    page_size = 1
+    page_size = 20
     page_size_query_param = 'page_size'
     max_page_size = 50
     
@@ -91,16 +91,23 @@ class ProductSizeListView(ListAPIView):
 
 ### Search ###
 
-class SearchApiView(APIView):
-    def post(self, request):
-        searched = request.data.get('query')
-        if searched:
-            results = Product.objects.filter(
-                Q(name__icontains=searched) |
-                Q(tags__tag__icontains=searched) |
-                Q(category__name__icontains=searched) |
-                Q(brand__name__icontains=searched)
-            ).distinct()
-            serializer = ProductSerializer(results, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response({"error": "Search value is required"}, status=status.HTTP_400_BAD_REQUEST)
+class SearchApiView(ListAPIView):
+    serializer_class = SimpleProductSerializer
+    pagination_class = ProductListPagination
+
+    def get_queryset(self):
+        searched = self.request.query_params.get('value', '').strip()
+        if not searched:
+            return Product.objects.none()
+
+        return Product.objects.filter(
+            Q(name__icontains=searched) |
+            Q(tags__tag__icontains=searched) |
+            Q(category__name__icontains=searched) |
+            Q(brand__name__icontains=searched)
+        ).distinct()
+
+    def list(self, request, *args, **kwargs):
+        if not request.query_params.get('value', '').strip():
+            return Response({"error": "Search value is required"}, status=status.HTTP_400_BAD_REQUEST)
+        return super().list(request, *args, **kwargs)

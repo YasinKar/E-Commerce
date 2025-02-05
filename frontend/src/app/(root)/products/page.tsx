@@ -4,6 +4,15 @@ import ProductCard from '@/components/ProductCard'
 import ProductsFilter from '@/components/ProductsFilter'
 import { getBrands, getCategories, getColors, getProducts, getSizes } from "@/utils/actions/product.actions";
 import { Product } from '@/types/product.types';
+import { getSettings } from '@/utils/actions/content.actions';
+
+export async function generateMetadata() {
+  const settings = await getSettings();
+
+  return {
+    title: `${settings.site_name} | Products`,
+  }
+}
 
 type ProductsProps = {
   searchParams: Record<string, string | string[] | undefined>;

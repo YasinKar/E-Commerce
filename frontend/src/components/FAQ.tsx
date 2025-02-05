@@ -1,6 +1,7 @@
 "use client";
 
 import { FAQ as FAQType } from '@/types/siteContent.types';
+import { ChevronRight } from 'lucide-react';
 import React, { useState } from 'react'
 
 type FAQProps = {
@@ -19,33 +20,19 @@ const FAQ: React.FC<FAQProps> = ({ faq }) => {
             <h2 className='title'>FAQ & Help</h2>
             <div className="w-full divide-y">
                 {faq.map((item, index) => (
-                    <div key={item.id}>
+                    <div key={item.id} >
                         <button
                             className="w-full flex justify-between items-center p-4 bg-white text-black font-medium focus:outline-none"
                             onClick={() => toggleAccordion(index)}
                         >
                             <span>{item.question}</span>
-                            <svg
-                                className={`w-5 h-5 transform transition-all ${activeIndex === index ? "rotate-180" : "rotate-0"
-                                    }`}
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                            >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M19 9l-7 7-7-7"
-                                />
-                            </svg>
+                            <ChevronRight className={`${activeIndex === index ? 'rotate-90' : ''} transition-all`} />
                         </button>
-                        {activeIndex === index && (
-                            <div className="px-4 py-2 bg-white text-gray-600">
+                        <div className={`overflow-hidden transition-max-height duration-300 ease-in-out ${activeIndex === index ? "max-h-[500px]" : "max-h-0"}`}>
+                            <div className='px-4 py-2 bg-white text-gray-600 '>
                                 {item.answer}
                             </div>
-                        )}
+                        </div>
                     </div>
                 ))}
             </div>

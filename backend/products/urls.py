@@ -8,5 +8,5 @@ urlpatterns = [
     path('brands/', views.BrandListView.as_view()),
     path('colors/', views.ProductColorListView.as_view()),
     path('sizes/', views.ProductSizeListView.as_view()),
-    path('search', views.SearchApiView.as_view()),
+    path('search/', views.SearchApiView.as_view()),
 ]

@@ -9,7 +9,7 @@ class SiteSettingSerializer(serializers.ModelSerializer):
             'site_logo', 'site_icon', 'site_description',
             'rules', 'twitter', 'telegram',
             'linkedin', 'instagram', 'email',
-            'copyright',
+            'copyright', 'site_main_title'
         ]
 
 class ElectronicSymbolSerializer(serializers.ModelSerializer):

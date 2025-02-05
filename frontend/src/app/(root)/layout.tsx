@@ -5,22 +5,6 @@ import MobNavbar from "@/components/MobNavbar";
 import TopNav from "@/components/TopNav";
 import { getElectronicSymbols, getSettings } from "@/utils/actions/content.actions";
 
-export async function generateMetadata() {
-  const settings = await getSettings();
-
-  return {
-    title: `${settings.site_name} | Home`,
-    description: settings.site_description,
-    openGraph: {
-      title: `${settings.site_name} | Home`,
-      description: settings.site_description,
-      url: `${settings.domain}`,
-      images: [{ url: settings.image }],
-      type: 'website',
-    },
-  };
-}
-
 export default async function RootLayout({ children, }: Readonly<{ children: React.ReactNode; }>) {
   const settings = await getSettings();
 

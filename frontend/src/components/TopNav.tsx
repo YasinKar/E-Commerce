@@ -19,11 +19,10 @@ const TopNav: React.FC<TopNavProps> = ({ settings }) => {
 
     const router = useRouter()
 
-    const handleClick = async (e: React.MouseEvent<SVGElement, MouseEvent>) => {
-        e.preventDefault();
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
         if (searchValue) {
-            setSearchValue('')
-            router.push(`search/${searchValue}`)
+            router.push(`search/?value=${searchValue}`)
         }
     }
 
@@ -43,12 +42,14 @@ const TopNav: React.FC<TopNavProps> = ({ settings }) => {
                 </div>
 
                 <div className="w-full sm:w-[300px] md:w-[70%] relative">
-                    <input type="text" className="border-gray-200 border-2 p-2 px-4 rounded-lg w-full outline-none focus:border-sky-500 text-gray-600" placeholder="Search..." onChange={(e) => setSearchValue(e.target.value)} value={searchValue} />
-                    <Search className='absolute right-0 top-0 mr-3 mt-3 text-gray-600 cursor-pointer hover' size={20} onClick={handleClick} />
+                    <form onSubmit={handleSubmit}>
+                        <input type="text" className="border-gray-200 border-2 p-2 px-4 rounded-lg w-full outline-none focus:border-sky-500 text-gray-600" placeholder="Search..." onChange={(e) => setSearchValue(e.target.value)} value={searchValue} />
+                        <button><Search className='absolute right-0 top-0 mr-3 mt-3 text-gray-600 cursor-pointer hover' size={20} /></button>
+                    </form>
                 </div>
 
                 <div className="hidden lg:flex gap-4 text-gray-600 text-[30px]">
-                    <Link href={user ? '/dashboard' : '/register'}>
+                    <Link href={user ? '/dashboard' : '/login'}>
                         <UserRound className='cursor-pointer hover' />
                     </Link>
 

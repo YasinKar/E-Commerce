@@ -31,3 +31,8 @@ export const getProduct = async (slug: string) => {
     const product = await api.get(`product/${slug}`)
     return product
 }
+
+export const Search = async (value: string, page: number = 1) => {
+    const results = await api.get(`search/?page=${page}&value=${value}`)
+    return results
+}

@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.utils.html import format_html
 from .models import (
     Brand,
     Category,
@@ -42,11 +43,17 @@ class ProductSizeAdmin(admin.ModelAdmin):
     
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('name', 'price', 'category', 'brand', 'gender', 'stars', 'inventory', 'is_active')
+    list_display = ('image_tag', 'name', 'price', 'category', 'brand', 'gender', 'stars', 'inventory', 'is_active')
+    list_display_links = ('image_tag', 'name')
     list_filter = ('name', 'price', 'category', 'brand', 'gender', 'stars', 'inventory', 'is_active', 'tags', 'colors', 'sizes')
     search_fields = ('name', 'price', 'category', 'brand', 'gender', 'stars', 'inventory', 'is_active', 'tags', 'colors', 'sizes')
     list_editable = ('is_active', 'stars')
     exclude = ('slug', )
+    
+    def image_tag(self, obj):
+        return format_html('<img src="{}" width="100" height="100" />'.format(obj.image.url))
+    
+    image_tag.short_description = 'Image'
     
     inlines = [ProductImageBlockInline, ProductInformationBlockInline]
     
@@ -58,11 +65,17 @@ class DiscountBlockInline(admin.TabularInline):
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ('name', 'parent', 'is_active')
+    list_display = ('image_tag', 'name', 'parent', 'is_active')
+    list_display_links = ('image_tag', 'name')
     list_filter = ('name', 'parent', 'is_active')
     search_fields = ('name', 'parent', 'is_active')
     list_editable = ('is_active', )
     exclude = ('slug', )
+    
+    def image_tag(self, obj):
+        return format_html('<img src="{}" width="100" height="100" />'.format(obj.image.url))
+    
+    image_tag.short_description = 'Image'
     
     inlines = [DiscountBlockInline]
 
@@ -70,11 +83,17 @@ class CategoryAdmin(admin.ModelAdmin):
 
 @admin.register(Brand)
 class BrandAdmin(admin.ModelAdmin):
-    list_display = ('name', 'is_active')
+    list_display = ('logo_tag', 'name', 'is_active')
+    list_display_links = ('logo_tag', 'name')
     list_filter = ('name', 'is_active')
     search_fields = ('name', 'is_active')
     list_editable = ('is_active', )
     exclude = ('slug', )
+    
+    def logo_tag(self, obj):
+        return format_html('<img src="{}" width="100" height="100" />'.format(obj.logo.url))
+    
+    logo_tag.short_description = 'Image'
     
 ### ProductComment ###    
 

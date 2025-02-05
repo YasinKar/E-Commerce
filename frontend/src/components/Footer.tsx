@@ -22,10 +22,13 @@ const Footer: React.FC<FooterProps> = ({ electronicSymbols, settings }) => {
                                 <Link href="/contact-us" className="hover:underline">Contact Us</Link>
                             </li>
                             <li className="mb-4">
-                                <Link href="#" className="hover:underline">Instagram</Link>
+                                <Link href={settings.instagram || '/'} className="hover:underline">Instagram</Link>
                             </li>
                             <li className="mb-4">
-                                <Link href="#" className="hover:underline">Telegram</Link>
+                                <Link href={settings.linkedin || '/'} className="hover:underline">Linkedin</Link>
+                            </li>
+                            <li className="mb-4">
+                                <Link href={settings.twitter || '/'} className="hover:underline">Twitter</Link>
                             </li>
                         </ul>
                     </div>
@@ -42,7 +45,7 @@ const Footer: React.FC<FooterProps> = ({ electronicSymbols, settings }) => {
                                 <Link href="/cart" className="hover:underline">Cart</Link>
                             </li>
                             <li className="mb-4">
-                                <Link href="/special-sale" className="hover:underline">Special Sale</Link>
+                                <Link href="/products?on_sale=true" className="hover:underline">Special Sale</Link>
                             </li>
                         </ul>
                     </div>
@@ -53,13 +56,13 @@ const Footer: React.FC<FooterProps> = ({ electronicSymbols, settings }) => {
                                 <Link href="/dashboard" className="hover:underline">Dashboard</Link>
                             </li>
                             <li className="mb-4">
-                                <Link href="/contact-us" className="hover:underline">Orders</Link>
+                                <Link href="/dashboard/orders" className="hover:underline">Orders</Link>
                             </li>
                             <li className="mb-4">
-                                <Link href="#" className="hover:underline">Sign in</Link>
+                                <Link href="/login" className="hover:underline">Sign in</Link>
                             </li>
                             <li className="mb-4">
-                                <Link href="#" className="hover:underline">Sign out</Link>
+                                <Link href="/log-out" className="hover:underline">Sign out</Link>
                             </li>
                         </ul>
                     </div>

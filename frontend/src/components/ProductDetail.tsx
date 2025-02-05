@@ -130,7 +130,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product }) => {
                             <ul className="list-disc list-inside text-gray-700">
                                 {
                                     product.tags?.map(tag => (
-                                        <li key={tag.id}><Link className='link' href={`/search?query=${tag.tag}`}>{tag.tag}</Link></li>
+                                        <li key={tag.id}><Link className='link' href={`/search?value=${tag.tag}`}>{tag.tag}</Link></li>
                                     ))
                                 }
                             </ul>

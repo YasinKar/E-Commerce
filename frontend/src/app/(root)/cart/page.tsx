@@ -2,9 +2,18 @@ import CartForm from '@/components/CartForm';
 import CartItem from '@/components/CartItem';
 import { Cart as CartType } from '@/types/cart.types';
 import { getCart } from '@/utils/actions/cart.actions'
+import { getSettings } from '@/utils/actions/content.actions';
 import { getUserAddresses } from '@/utils/actions/user.actions';
 import Image from 'next/image';
 import React from 'react'
+
+export async function generateMetadata() {
+    const settings = await getSettings();
+
+    return {
+        title: `${settings.site_name} | Cart`,
+    }
+}
 
 const Cart = async () => {
   const cart = await getCart() as CartType

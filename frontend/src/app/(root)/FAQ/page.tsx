@@ -1,6 +1,14 @@
 import React from 'react'
 import FAQ from '@/components/FAQ';
-import { getFAQ } from '@/utils/actions/content.actions';
+import { getFAQ, getSettings } from '@/utils/actions/content.actions';
+
+export async function generateMetadata() {
+    const settings = await getSettings();
+
+    return {
+        title: `${settings.site_name} | FAQ & Help`,
+    }
+}
 
 const FAQPage = async () => {
   const faq = await getFAQ()

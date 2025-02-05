@@ -15,7 +15,7 @@ const Pagination: React.FC<PaginationProps> = ({ next, previous, currentPage, co
     const router = useRouter();
     const searchParams = useSearchParams();
 
-    const totalPages = Math.ceil(count / 1)
+    const totalPages = Math.ceil(count / 20)
 
     const handlePageChange = (page: string) => {
         const params = new URLSearchParams(searchParams.toString());

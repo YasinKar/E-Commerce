@@ -5,7 +5,6 @@ import Image from 'next/image'
 import { Order } from '@/types/cart.types'
 import { changeOrderCount, removeOrder } from '@/utils/actions/cart.actions'
 import Swal from 'sweetalert2'
-import { revalidate } from '@/utils/revalidate'
 import Link from 'next/link'
 
 type CartItemProps = {
@@ -16,7 +15,7 @@ const CartItem: React.FC<CartItemProps> = ({ order }) => {
     const handleChangeOrderCount = async (id: number, state: 'decrease' | 'increase') => {
         try {
             const res = await changeOrderCount(id, state)
-            revalidate('/cart')
+
             Swal.fire({
                 title: 'Order Count Changed',
                 text: Object.values(res)[0] as string,
@@ -36,7 +35,6 @@ const CartItem: React.FC<CartItemProps> = ({ order }) => {
     const handleRemoveOrder = async (id: number) => {
         try {
             const res = await removeOrder(id)
-            revalidate('/cart')
             Swal.fire({
                 title: 'Order Removed',
                 text: Object.values(res)[0] as string,

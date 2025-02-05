@@ -1,7 +1,6 @@
 import axios, { InternalAxiosRequestConfig } from 'axios';
-import { deleteCookie, setCookie } from 'cookies-next';
+import { deleteCookie, setCookie, getCookie } from 'cookies-next';
 import { jwtDecode } from "jwt-decode";
-import { cookies } from 'next/headers';
 
 export const API_BASE_URL = process.env.API_URL
 
@@ -25,9 +24,7 @@ const http = axios.create({
 });
 
 http.interceptors.request.use(async (config: InternalAxiosRequestConfig) => {
-  const cookieStore = await cookies()
-
-  const authTokensString = cookieStore.get('authTokens')?.value
+  const authTokensString =  await getCookie("authTokens")
 
   if (!authTokensString) return config;
 

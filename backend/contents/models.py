@@ -8,6 +8,7 @@ class SiteSetting(models.Model):
     site_logo = models.ImageField(upload_to='site_logo', verbose_name='Site logo')
     site_icon = models.ImageField(upload_to='site_icon',null=True, blank=True, verbose_name='Site icon')
     site_description = models.TextField(verbose_name='Description')
+    site_main_title = models.TextField(verbose_name='Site Main Title')
     rules = models.TextField(verbose_name='Rules')
     telegram = models.URLField(
         max_length=400,

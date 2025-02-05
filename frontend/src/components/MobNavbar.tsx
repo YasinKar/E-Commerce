@@ -34,7 +34,7 @@ const MobNavbar = () => {
                 </div>
 
                 <div className="text-gray-500 text-2xl">
-                    <Link href={user ? '/dashboard' : '/register'} className="flex flex-col items-center">
+                    <Link href={user ? '/dashboard' : '/login'} className="flex flex-col items-center">
                         <UserRound />
                     </Link>
                 </div>
