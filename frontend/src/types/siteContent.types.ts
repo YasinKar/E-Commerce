@@ -11,11 +11,12 @@ export interface siteSettings {
     site_logo: string
     site_icon: string | null
     site_description: string
-    rules: string
     twitter: string | null
     linkedin: string | null
     instagram: string | null
+    telegram: string | null
     email: string | null
+    phone : number | null
     copyright: string | null
 }
 

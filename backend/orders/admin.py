@@ -3,9 +3,46 @@ from .models import (
     Order,
     Cart,
     OfferCode,
-    UserAddress
+    UserAddress,
+    DeliveredOrder,
+    ProcessingOrder,
+    OutForDeliveryOrder,
+    PendingPaymentOrder
+    
 )
-
+    
+@admin.register(DeliveredOrder)
+class DeliveredOrderAdmin(admin.ModelAdmin):
+    list_display = ('user', 'address', 'status', 'offer_code', 'is_paid', 'paid', 'paid_date')
+    list_filter = ('user', 'paid_date')
+    
+    def get_queryset(self, request):
+        return super().get_queryset(request).filter(status='delivered', is_paid=True)
+    
+@admin.register(ProcessingOrder)
+class ProcessingOrderAdmin(admin.ModelAdmin):
+    list_display = ('user', 'address', 'status', 'offer_code', 'is_paid', 'paid', 'paid_date')
+    list_filter = ('user', 'paid_date')
+    
+    def get_queryset(self, request):
+        return super().get_queryset(request).filter(status='processing', is_paid=True)
+    
+@admin.register(OutForDeliveryOrder)
+class OutForDeliveryOrderAdmin(admin.ModelAdmin):
+    list_display = ('user', 'address', 'status', 'offer_code', 'is_paid', 'paid', 'paid_date')
+    list_filter = ('user', 'paid_date')
+    
+    def get_queryset(self, request):
+        return super().get_queryset(request).filter(status='out_for_delivery', is_paid=True)
+    
+@admin.register(PendingPaymentOrder)
+class PendingPaymentOrderAdmin(admin.ModelAdmin):
+    list_display = ('user', 'address', 'status', 'offer_code', 'is_paid', 'paid', 'paid_date')
+    list_filter = ('user', 'paid_date')
+    
+    def get_queryset(self, request):
+        return super().get_queryset(request).filter(status='pending_payment', is_paid=True)
+    
 class OrderBlockInline(admin.TabularInline):
     model = Order
     

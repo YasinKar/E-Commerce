@@ -5,7 +5,7 @@ import ContactForm from "@/components/ContactForm";
 import ProductSlider from "@/components/ProductSlider";
 import Slider from "@/components/Slider";
 // Actions
-import { getBanners, getFAQ } from "@/utils/actions/content.actions";
+import { getBanners, getFAQ, getSettings } from "@/utils/actions/content.actions";
 import { getBrands, getCategories, getProducts } from "@/utils/actions/product.actions";
 
 export default async function Home() {
@@ -19,6 +19,8 @@ export default async function Home() {
 
   const faq = await getFAQ()
 
+  const settings = await getSettings();
+
   return (
     <main className="container relative my-8 space-y-10 z-10">
       <Slider banners={banners} />
@@ -26,7 +28,7 @@ export default async function Home() {
       <Categories categories={categories} />
       <ProductSlider products={products.results} title="Special Sale" />
       <Brands brands={brands} />
-      <ContactForm />
+      <ContactForm settings={settings} />
       <FAQ faq={faq} />
     </main>
   );

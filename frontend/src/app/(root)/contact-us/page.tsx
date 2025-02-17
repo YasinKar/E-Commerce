@@ -3,17 +3,19 @@ import { getSettings } from '@/utils/actions/content.actions';
 import React from 'react'
 
 export async function generateMetadata() {
-    const settings = await getSettings();
+  const settings = await getSettings();
 
-    return {
-        title: `${settings.site_name} | Contact Us`,
-    }
+  return {
+    title: `${settings.site_name} | Contact Us`,
+  }
 }
 
-const ContactUs = () => {
+const ContactUs = async () => {
+  const settings = await getSettings();  
+
   return (
     <main className='container my-8'>
-      <ContactForm />
+      <ContactForm settings={settings}/>
     </main>
   )
 }

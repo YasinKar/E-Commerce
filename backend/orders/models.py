@@ -119,7 +119,31 @@ class Cart(models.Model):
     class Meta:
         verbose_name = 'Cart'
         verbose_name_plural = 'Carts'
+ 
+class ProcessingOrder(Cart):
+    class Meta:
+        proxy = True
+        verbose_name = 'Processing Order'
+        verbose_name_plural = 'Processing Orders'
+
+class OutForDeliveryOrder(Cart):
+    class Meta:
+        proxy = True
+        verbose_name = 'Out For Delivery Order'
+        verbose_name_plural = 'Out For Delivery Orders'
         
+class DeliveredOrder(Cart):
+    class Meta:
+        proxy = True
+        verbose_name = 'Delivered Order'
+        verbose_name_plural = 'Delivered Orders'
+        
+class PendingPaymentOrder(Cart):
+    class Meta:
+        proxy = True
+        verbose_name = 'Pending Payment Order'
+        verbose_name_plural = 'Pending Payment Orders'
+       
 class Order(models.Model):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE, verbose_name = 'Cart', related_name='orders')
     product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name = 'Product')

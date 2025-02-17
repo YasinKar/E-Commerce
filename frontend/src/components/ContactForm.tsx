@@ -5,8 +5,13 @@ import { Instagram, Linkedin, LoaderCircle, Mail, Phone, Send, Twitter } from 'l
 import { ContactUs } from '@/utils/actions/content.actions'
 import Link from 'next/link'
 import Swal from 'sweetalert2'
+import { siteSettings } from '@/types/siteContent.types'
 
-const ContactForm = () => {
+type ContactFormProps = {
+  settings: siteSettings
+}
+
+const ContactForm: React.FC<ContactFormProps> = ({ settings }) => {
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -95,22 +100,22 @@ const ContactForm = () => {
 
         <div className='flex-1 flex flex-col justify-center items-center space-y-10'>
           <p className='flex text items-center'>
-            <Mail className='mr-1' />Email@gmail.com
+            <Mail className='mr-1' />{settings.email}
           </p>
           <p className='flex text items-center'>
-            <Phone className='mr-1' />944545454566
+            <Phone className='mr-1' />{settings.phone}
           </p>
           <div className="flex justify-center gap-10 sm:gap-15 md:gap-20">
-            <Link href='' target="_blank" rel="noopener noreferrer" className='cursor-pointer'>
+            <Link href={settings.twitter || '/'} target="_blank" rel="noopener noreferrer" className='cursor-pointer'>
               <Twitter className="size-8 sm:size-10 text-sky-500 hover:text-sky-600 transition" />
             </Link>
-            <Link href='' target="_blank" rel="noopener noreferrer" className='cursor-pointer'>
+            <Link href={settings.instagram || '/'} target="_blank" rel="noopener noreferrer" className='cursor-pointer'>
               <Instagram className="size-8 sm:size-10 text-sky-500 hover:text-sky-600 transition" />
             </Link>
-            <Link href='' target="_blank" rel="noopener noreferrer" className='cursor-pointer'>
+            <Link href={settings.linkedin || '/'} target="_blank" rel="noopener noreferrer" className='cursor-pointer'>
               <Linkedin className="size-8 sm:size-10 text-sky-500 hover:text-sky-600 transition" />
             </Link>
-            <Link href='' target="_blank" rel="noopener noreferrer" className='cursor-pointer'>
+            <Link href={settings.telegram || '/'} target="_blank" rel="noopener noreferrer" className='cursor-pointer'>
               <Send className="size-8 sm:size-10 text-sky-500 hover:text-sky-600 transition" />
             </Link>
           </div>
