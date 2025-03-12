@@ -6,11 +6,11 @@ import { CalendarDays, IdCard, LoaderCircle, ShieldCheck } from 'lucide-react'
 import React, { FormEvent, useState } from 'react'
 import Swal from 'sweetalert2'
 
-type ProfileFormProps = {
+type AccountFormProps = {
     user: User
 }
 
-const ProfileForm: React.FC<ProfileFormProps> = ({ user }) => {
+const AccountForm: React.FC<AccountFormProps> = ({ user }) => {
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const [error, setError] = useState<string | null>(null)
 
@@ -107,4 +107,4 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ user }) => {
     )
 }
 
-export default ProfileForm
+export default AccountForm

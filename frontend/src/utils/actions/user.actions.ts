@@ -39,8 +39,8 @@ export const getUserMessages = async () => {
     return messages
 }
 
-export const getUserOrders = async () => {
-    const orders = await api.get('dashboard/orders');
+export const getUserOrders = async (status: 'delivered' | 'processing' | 'out_for_delivery' | 'pending_payment' | null = null) => {
+    const orders = await api.get(`dashboard/orders${status ? '?status=' + status : ''}`);
     return orders
 }
 

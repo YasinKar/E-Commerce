@@ -11,12 +11,15 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
       <section className="hidden w-1/2 items-center justify-center bg-sky-500 p-10 lg:flex flex-col space-y-5">
         <h1 className="title">
           <Link href={'/'}>
-            <Image
-              src={settings.site_logo}
-              alt="Logo"
-              width={110}
-              height={110}
-            />
+            {
+              settings.site_logo &&
+              <Image
+                src={settings.site_logo}
+                alt="Logo"
+                width={110}
+                height={110}
+              />
+            }
           </Link>
         </h1>
         <p className="text-white font-medium text-sm lg:text-lg text-center">{settings.site_description}</p>

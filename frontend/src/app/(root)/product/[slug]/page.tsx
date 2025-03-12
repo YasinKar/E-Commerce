@@ -3,6 +3,7 @@ import { Product } from '@/types/product.types'
 import { getProduct } from '@/utils/actions/product.actions'
 import ProductDetail from '@/components/ProductDetail'
 import { getSettings } from '@/utils/actions/content.actions';
+import { notFound } from 'next/navigation'
 
 export async function generateMetadata({ params, }: { params: Promise<{ slug: string }> }) {
     const settings = await getSettings();
@@ -14,7 +15,12 @@ export async function generateMetadata({ params, }: { params: Promise<{ slug: st
 }
 
 const ProductDetailPage = async ({ params, }: { params: Promise<{ slug: string }> }) => {
-    const product: Product = await getProduct((await params).slug)
+    let product : Product
+    try {
+        product = await getProduct((await params).slug)
+    } catch {
+        notFound()
+    }
 
     return <ProductDetail product={product} />
 }

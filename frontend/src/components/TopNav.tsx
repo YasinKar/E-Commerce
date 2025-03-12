@@ -22,7 +22,7 @@ const TopNav: React.FC<TopNavProps> = ({ settings }) => {
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         if (searchValue) {
-            router.push(`search/?value=${searchValue}`)
+            router.push(`/search/?value=${searchValue}`)
         }
     }
 
@@ -31,13 +31,15 @@ const TopNav: React.FC<TopNavProps> = ({ settings }) => {
             <div className="container sm:flex justify-between items-center">
                 <div className="font-bold text-4xl text-center pb-4 sm:pb-0 text-black">
                     <Link href='/'>
-                        <Image
-                            src={settings.site_logo}
-                            alt="Logo"
-                            width={80}
-                            className='m-auto'
-                            height={80}
-                        />
+                        {settings.site_logo &&
+                            <Image
+                                src={settings.site_logo}
+                                alt="Logo"
+                                width={80}
+                                className='m-auto'
+                                height={80}
+                            />
+                        }
                     </Link>
                 </div>
 

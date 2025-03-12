@@ -21,3 +21,11 @@ export interface User {
   is_active: boolean
   date_joined: string
 }
+
+export interface Message {
+  id: number;
+  user: number
+  title: string
+  message: string
+  date: string
+}

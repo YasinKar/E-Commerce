@@ -14,7 +14,7 @@ const Dashboard = async () => {
                     Account
                 </h3>
                 <div className='flex justify-between items-center'>
-                    <Link href='/dashboard/profile/'>
+                    <Link href='/dashboard/account/'>
                         <div className='bg-white border-2 border-sky-400 rounded-lg flex justify-center items-center w-52 py-5 text-sky-400 font-medium text-sm lg:text-lg text-center hover:text-sky-500 transition-all'>
                             Edit Account <User className='ms-2' />
                         </div>

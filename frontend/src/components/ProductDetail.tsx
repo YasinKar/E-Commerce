@@ -42,10 +42,11 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product }) => {
                 <div className="flex flex-wrap -mx-4">
                     {/* <!-- Product Images --> */}
                     <div className="w-full md:w-1/2 px-4 mb-8">
-                        <Image src={currentImage} alt={product.name} width={1000} height={1000} className="w-full h-auto rounded-lg shadow-md mb-4" id="mainImage" />
+                        {product.image && <Image src={currentImage} alt={product.name} width={1000} height={1000} className="w-full h-auto rounded-lg shadow-md mb-4" id="mainImage" />}
                         <div className="flex gap-4 py-4 justify-center overflow-x-auto">
                             {
                                 product.images.map(image => (
+                                    image.image &&
                                     <Image
                                         key={image.id}
                                         src={image.image}
@@ -57,14 +58,17 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product }) => {
                                     />
                                 ))
                             }
-                            <Image
-                                src={product.image}
-                                alt={product.name}
-                                width={1000}
-                                height={1000}
-                                className="size-16 sm:size-20 object-cover rounded-md cursor-pointer opacity-60 hover:opacity-100 transition duration-300"
-                                onClick={() => setCurrentImage(product.image)}
-                            />
+                            {
+                                product.image &&
+                                <Image
+                                    src={product.image}
+                                    alt={product.name}
+                                    width={1000}
+                                    height={1000}
+                                    className="size-16 sm:size-20 object-cover rounded-md cursor-pointer opacity-60 hover:opacity-100 transition duration-300"
+                                    onClick={() => setCurrentImage(product.image)}
+                                />
+                            }
                         </div>
                     </div>
 

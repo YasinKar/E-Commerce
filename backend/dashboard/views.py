@@ -10,6 +10,8 @@ from orders.serializers import UserAddressSerializer, CartSerializer
 from users.models import EmailChangeRequest
 from users.serializers import UserSerializer
 from django.shortcuts import get_object_or_404
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.pagination import PageNumberPagination
 
 #### Dashboard ####
 
@@ -56,13 +58,21 @@ class UserMessageListView(ListAPIView):
     def get_queryset(self):
         messages = Message.objects.filter(user=self.request.user)
         return messages
-    
+
+class UserOrderListPagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = 'page_size'
+    max_page_size = 20
+
 class UserOrderListView(ListAPIView):
     serializer_class = CartSerializer
+    pagination_class = UserOrderListPagination
     permission_classes = [IsAuthenticated]    
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['status']
 
     def get_queryset(self):
-        user_orders = Cart.objects.filter(user=self.request.user, is_paid=True)\
+        user_orders = Cart.objects.filter(user=self.request.user)\
             .select_related('offer_code', 'address')\
                 .prefetch_related('orders', 'orders__product', 'orders__size', 'orders__color')
         return user_orders

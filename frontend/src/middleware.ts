@@ -1,11 +1,25 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { cookies } from "next/headers";
+import { getCookie } from "cookies-next";
 import { jwtDecode } from "jwt-decode";
 
+interface JwtPayload {
+    exp: number;
+    [key: string]: any;
+}
+
+const isTokenValid = (token: string) => {
+    try {
+        const decoded = jwtDecode<JwtPayload>(token);
+        const currentTime = Math.floor(Date.now() / 1000);
+        return decoded.exp > currentTime;
+    } catch {
+        return false;
+    }
+};
+
 export async function middleware(req: NextRequest) {
-    const cookieStore = await cookies();
-    const authTokensString = cookieStore.get("authTokens")?.value;
+    const authTokensString = await getCookie("authTokens", { req });
 
     if (!authTokensString) {
         return NextResponse.redirect(new URL("/login", req.url));
@@ -13,28 +27,13 @@ export async function middleware(req: NextRequest) {
 
     let authTokens;
     try {
-        authTokens = JSON.parse(authTokensString);
+        authTokens = JSON.parse(authTokensString as string);
     } catch (error) {
         console.error("Invalid authTokens:", error);
         const response = NextResponse.redirect(new URL("/login", req.url));
         response.cookies.delete("authTokens");
         return response;
     }
-
-    interface JwtPayload {
-        exp: number;
-        [key: string]: any;
-    }
-
-    const isTokenValid = (token: string) => {
-        try {
-            const decoded = jwtDecode<JwtPayload>(token);
-            const currentTime = Math.floor(Date.now() / 1000);
-            return decoded.exp > currentTime;
-        } catch {
-            return false;
-        }
-    };
 
     if (!isTokenValid(authTokens.access)) {
         const response = NextResponse.redirect(new URL("/login", req.url));

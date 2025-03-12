@@ -51,13 +51,16 @@ const Brands: React.FC<BrandsProps> = ({ brands }) => {
           <SwiperSlide key={brand.id}>
             <Link href={`products/?brand=${brand.slug}`}>
               <div className='w-full p-2 sm:p-4 border border-gray-300 rounded-lg shadow-lg space-y-2'>
-                <Image
-                  alt={brand.name}
-                  src={brand.logo}
-                  width={1000}
-                  height={1000}
-                  className='w-full h-[150px] sm:h-[180px] object-cover rounded-lg'
-                />
+                {
+                  brand.logo &&
+                  < Image
+                    alt={brand.name}
+                    src={brand.logo}
+                    width={1000}
+                    height={1000}
+                    className='w-full h-[150px] sm:h-[180px] object-cover rounded-lg'
+                  />
+                }
                 <p className='text'>{brand.name}</p>
               </div>
             </Link>

@@ -28,8 +28,8 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ user }) => {
                         <div className="grow">
                             <ul className="divide-y">
                                 <li className='py-3'>
-                                    <Link href='/dashboard/profile/' className='text flex justify-center items-center hover:text-sky-500 transition-all'>
-                                        Profile <UserIcon className='ms-2' />
+                                    <Link href='/dashboard/account/' className='text flex justify-center items-center hover:text-sky-500 transition-all'>
+                                        Account <UserIcon className='ms-2' />
                                     </Link>
                                 </li>
                                 <li className='py-3'>

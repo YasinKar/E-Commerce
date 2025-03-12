@@ -1,8 +1,8 @@
-import axios, { InternalAxiosRequestConfig } from 'axios';
-import { cookies } from 'next/headers';
+import axios, { InternalAxiosRequestConfig } from "axios";
 import { jwtDecode } from "jwt-decode";
+import { cookies } from "next/headers";
 
-export const API_BASE_URL = process.env.API_URL
+export const API_BASE_URL = process.env.API_URL;
 
 interface JwtPayload {
   exp: number;
@@ -19,23 +19,57 @@ const isTokenValid = (token: string) => {
   }
 };
 
+const refreshAccessToken = async (refreshToken: string) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/token/refresh/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ refresh: refreshToken }),
+      credentials: "include",
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to refresh token");
+    }
+
+    const data = await response.json();
+    return data.access;
+  } catch (error) {
+    console.error("Token refresh error:", error);
+    throw error;
+  }
+};
+
+const getClientCookie = (name: string) => {
+  if (typeof document === "undefined") return null;
+  const match = document.cookie.match(new RegExp(`(^| )${name}=([^;]+)`));
+  return match ? decodeURIComponent(match[2]) : null;
+};
+
 const http = axios.create({
   baseURL: API_BASE_URL,
+  withCredentials: true,
 });
 
 http.interceptors.request.use(async (config: InternalAxiosRequestConfig) => {
-  const cookieStore = await cookies();
+  let authTokensString: string | null = null;
 
-  const authTokensString =  cookieStore.get('authTokens')?.value
+  if (typeof window === "undefined") {
+    const cookieStore = await cookies();
+    authTokensString = cookieStore.get("authTokens")?.value || null;
+  } else {
+    authTokensString = getClientCookie("authTokens");
+  }
 
   if (!authTokensString) return config;
 
   let authTokens;
   try {
-    authTokens = JSON.parse(authTokensString as string);
+    authTokens = JSON.parse(authTokensString);
   } catch (error) {
     console.error("Invalid authTokens cookie:", error);
-    cookieStore.delete("authTokens");
     return config;
   }
 
@@ -43,18 +77,18 @@ http.interceptors.request.use(async (config: InternalAxiosRequestConfig) => {
 
   if (!isTokenValid(authTokens.access)) {
     try {
-      const response = await http.post("token/refresh/", {
-        refresh: authTokens.refresh,
-      });
+      const newAccessToken = await refreshAccessToken(authTokens.refresh);
+      authTokens.access = newAccessToken;
 
-      authTokens.access = response.data.access;
-      cookieStore.set("authTokens", JSON.stringify(authTokens), {
-        maxAge: 30 * 24 * 60 * 60,
-      });
+      if (typeof window !== "undefined") {
+        document.cookie = `authTokens=${encodeURIComponent(
+          JSON.stringify(authTokens)
+        )}; path=/; max-age=${30 * 24 * 60 * 60}`;
+      }
     } catch (error) {
       console.error("Failed to refresh token:", error);
-      cookieStore.delete("authTokens");
       if (typeof window !== "undefined") {
+        document.cookie = "authTokens=; path=/; max-age=0";
         window.location.href = "/login";
       }
       throw error;

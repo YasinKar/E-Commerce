@@ -33,12 +33,15 @@ const Slider: React.FC<SliderProps> = ({ banners }) => {
         <SwiperSlide key={slide.id}>
           <Link href={slide.url}>
             <div className="relative w-full h-[50vh]">
-              <Image
-                src={slide.image}
-                alt={slide.url}
-                fill
-                className="rounded-lg object-cover "
-              />
+              {
+                slide.image &&
+                <Image
+                  src={slide.image}
+                  alt={slide.url}
+                  fill
+                  className="rounded-lg object-cover "
+                />
+              }
             </div>
           </Link>
         </SwiperSlide>

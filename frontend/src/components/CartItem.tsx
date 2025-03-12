@@ -55,7 +55,7 @@ const CartItem: React.FC<CartItemProps> = ({ order }) => {
         <div className="flex items-center hover:bg-gray-100 -mx-8 px-10 py-5">
             <Link href={`product/${order.product.slug}`} className='flex w-2/5'>
                 <div className="md:w-20 w-10">
-                    <Image className="w-full object-cover" width={100} height={100} src={order.product.image} alt={order.product.name} />
+                    {order.product.image && <Image className="w-full object-cover" width={100} height={100} src={order.product.image} alt={order.product.name} />}
                 </div>
                 <div className="flex flex-col justify-around ml-2 flex-grow">
                     <span className="font-bold md:text-sm text-xs md:w-32 w-14 overflow-hidden text-ellipsis">{order.product.name}</span>

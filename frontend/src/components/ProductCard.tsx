@@ -36,7 +36,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     return (
         <div className="card text-center p-2 sm:p-4 border border-gray-300 rounded-lg shadow-sm relative space-y-1">
             <div className="flex justify-center items-center">
-                <Image width={1000} height={1000} src={product.image} alt={product.name} className="rounded-lg object-cover h-[170px] sm:h-[200px] w-full" />
+                {product.image && <Image width={1000} height={1000} src={product.image} alt={product.name} className="rounded-lg object-cover h-[170px] sm:h-[200px] w-full" />}
             </div>
 
             <div className="flex items-center justify-center">
@@ -59,7 +59,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             </div>
 
             <h3 className="text-black text-lg font-bold">{product.name}</h3>
-            <p className="text-black">{product.price}</p>
+            <p className="text-black">${product.price}</p>
 
             <div className="card-detail h-0 absolute bottom-0 left-0 right-0 overflow-hidden">
                 <div className="flex flex-col items-center justify-center h-full space-y-5 font-medium text-xs sm:text-base">
