@@ -39,6 +39,11 @@ export const getUserMessages = async () => {
     return messages
 }
 
+export const deleteUserMessages = async () => {
+    const res = await api.delete('dashboard/messages/delete/');
+    return res
+}
+
 export const getUserOrders = async (status: 'delivered' | 'processing' | 'out_for_delivery' | 'pending_payment' | null = null) => {
     const orders = await api.get(`dashboard/orders${status ? '?status=' + status : ''}`);
     return orders

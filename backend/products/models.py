@@ -125,9 +125,16 @@ class Product(models.Model):
         super().save(*args, **kwargs)
         
     def get_discounted_price(self):
-        active_discount = self.category.discounts.filter(is_active=True, start_date__lte=timezone.now(), end_date__gte=timezone.now()).first()
-        if active_discount:
-            return self.price - (self.price * active_discount.discount_percentage / 100)
+        if self.category: 
+            active_discount = self.category.discounts.filter(
+                is_active=True, 
+                start_date__lte=timezone.now(), 
+                end_date__gte=timezone.now()
+            ).order_by('-discount_percentage').first()
+            
+            if active_discount:
+                return self.price - (self.price * active_discount.discount_percentage / 100)
+        
         return self.price
     
     def __str__(self):

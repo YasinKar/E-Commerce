@@ -8,7 +8,6 @@ export interface Address {
   receiver_national_code: string
   receiver_phone: string
   receiver_post_code: string
-  user: number
 }
 
 export interface User {

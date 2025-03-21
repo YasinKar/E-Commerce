@@ -58,8 +58,16 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                 </div>
             </div>
 
-            <h3 className="text-black text-lg font-bold">{product.name}</h3>
-            <p className="text-black">${product.price}</p>
+            <h3 className="text-black text-lg font-bold ">{product.name}</h3>
+            {
+                product.price > product.discounted_price ?
+                    <div>
+                        <p className="text-black line-through text-sm">${product.price}</p>
+                        <p className="text-black">${product.discounted_price}</p>
+                    </div>
+                    : <p className="text-black">${product.price}</p>
+
+            }
 
             <div className="card-detail h-0 absolute bottom-0 left-0 right-0 overflow-hidden">
                 <div className="flex flex-col items-center justify-center h-full space-y-5 font-medium text-xs sm:text-base">
@@ -74,7 +82,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                     </Link>
                 </div>
             </div>
-        </div>
+        </div >
     )
 }
 

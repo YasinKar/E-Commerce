@@ -111,7 +111,7 @@ const Orders = async ({ searchParams }: OrdersProps) => {
                                                 :
                                                 <h4 className='text-yellow-500 font-medium text-lg lg:text-2xl flex items-center gap-2'><CircleHelp />Pending Payment</h4>
                                         }
-                                        <Link className='link flex items-center' href={`dashboard/orders/${order.id}`}>See Order Detail<ChevronRight /></Link>
+                                        <Link className='link flex items-center' href={`/dashboard/orders/${order.id}`}>See Order Detail<ChevronRight /></Link>
                                     </div>
                                     <div className='flex items-center gap-10 text-black font-medium'>
                                         <p>Order ID : {order.id}</p>

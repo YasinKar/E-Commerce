@@ -10,7 +10,7 @@ class OfferCodeSerializer(serializers.ModelSerializer):
 class UserAddressSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserAddress
-        fields = '__all__'
+        fields = ['id', 'receiver_first_name', 'receiver_last_name', 'receiver_phone', 'receiver_national_code', 'receiver_post_code', 'receiver_address', 'latitude', 'longitude']
 
 class OrderSerializer(serializers.ModelSerializer):
     product = ProductSerializer(read_only=True)

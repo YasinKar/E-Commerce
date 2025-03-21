@@ -1,4 +1,4 @@
-from rest_framework.generics import CreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView
+from rest_framework.generics import CreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView, DestroyAPIView
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -12,6 +12,7 @@ from users.serializers import UserSerializer
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.exceptions import NotFound
 
 #### Dashboard ####
 
@@ -58,7 +59,23 @@ class UserMessageListView(ListAPIView):
     def get_queryset(self):
         messages = Message.objects.filter(user=self.request.user)
         return messages
+    
+class DeleteUserMessagesView(DestroyAPIView):
+    serializer_class = MessageSerializer
+    permission_classes = [IsAuthenticated]    
 
+    def get_queryset(self):
+        return Message.objects.filter(user=self.request.user)
+    
+    def delete(self, request, *args, **kwargs):
+        user_messages = self.get_queryset()
+        deleted_count, _ = user_messages.delete()
+
+        return Response(
+            {"message": f"{deleted_count} message deleted."},
+            status=status.HTTP_204_NO_CONTENT
+        )
+        
 class UserOrderListPagination(PageNumberPagination):
     page_size = 10
     page_size_query_param = 'page_size'

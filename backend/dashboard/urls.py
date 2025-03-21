@@ -7,11 +7,13 @@ from .views import (
     UserAddressListView,
     UserMessageListView,
     UserOrderListView,
+    DeleteUserMessagesView
 )
 
 urlpatterns = [
     path('', UserAccountAPIView.as_view()),
     path('messages/', UserMessageListView.as_view()),
+    path('messages/delete/', DeleteUserMessagesView.as_view()),
     path('orders/', UserOrderListView.as_view()),
     path('addresses/', UserAddressListView.as_view()),
     path('add-address/', CreateAddressView.as_view()),

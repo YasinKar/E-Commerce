@@ -8,7 +8,6 @@ from .models import (
     ProcessingOrder,
     OutForDeliveryOrder,
     PendingPaymentOrder
-    
 )
     
 @admin.register(DeliveredOrder)
