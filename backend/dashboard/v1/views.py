@@ -1,19 +1,24 @@
-from rest_framework.generics import CreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView, DestroyAPIView
+from rest_framework.generics import (
+    CreateAPIView,
+    RetrieveUpdateDestroyAPIView,
+    ListAPIView,
+    DestroyAPIView
+)
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.pagination import PageNumberPagination
 
-from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 
 from dashboard.models import Message
-from .serializers import MessageSerializer
 from orders.models import UserAddress, Cart
-from orders.serializers import UserAddressSerializer, CartSerializer
+from orders.v1.serializers import UserAddressSerializer, CartSerializer
 from users.models import EmailChangeRequest
-from users.serializers import UserSerializer
+from users.tasks import send_confirmation_email
+from users.v1.serializers import UserSerializer
+from .serializers import MessageSerializer
 
 #### Dashboard ####
 
@@ -37,14 +42,16 @@ class UserAccountAPIView(APIView):
                 email = serializer.validated_data.get("email")
                 if email and email != user.email:                    
                     email_change_request = EmailChangeRequest.objects.create(
-                    user=user,
-                    new_email=email,
+                        user=user,
+                        new_email=email,
                     )
-
-                    email_context ={
-                        'email_change_request' : email_change_request,
-                    }
-                    email_change_request.send_confirmation_email(email_context)
+                    
+                    send_confirmation_email.delay(
+                        subject='Change account email',
+                        to=email,
+                        context={'email_change_request' : email_change_request,},
+                        template_name='email/change_email.html'
+                    )
                     
                     del serializer.validated_data['email'] # save other changes but email
                     serializer.save()
@@ -117,24 +124,21 @@ class AddressDetailView(RetrieveUpdateDestroyAPIView):
     
     def get_queryset(self):
         return UserAddress.objects.filter(user=self.request.user)
-
-    def get_object(self):
-        obj = get_object_or_404(UserAddress, id=self.kwargs["pk"], user=self.request.user)
-        return obj
      
 class ChangeEmailAPIView(APIView):
     permission_classes = [IsAuthenticated]
     
     def get(self, request, token):
-        email_change_request = EmailChangeRequest.objects.filter(token=token)
+        email_change_request = EmailChangeRequest.objects.filter(token=token).first()
         if not email_change_request:
-            Response({"error": "The EmailChangeRequest was not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"message": "The EmailChangeRequest was not found"}, status=status.HTTP_404_NOT_FOUND)
 
         if email_change_request.confirmed:
             return Response({"message": "Email has already been confirmed."}, status=status.HTTP_200_OK)
 
+        email_change_request.user.email = email_change_request.new_email
+        email_change_request.user.save()
         email_change_request.confirmed = True
-        email_change_request.apply_email_change()
         email_change_request.save()
         
         return Response({"message": "Email has been successfully updated!"}, status=status.HTTP_200_OK)

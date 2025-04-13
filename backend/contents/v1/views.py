@@ -1,5 +1,6 @@
 from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveAPIView
 from rest_framework.permissions import AllowAny
+
 from contents.models import SiteSetting, ElectronicSymbol, ContactUs, FAQ, Slider
 from .serializers import SiteSettingSerializer, ElectronicSymbolSerializer, ContactUsSerializer, FAQSerializer, SliderSerializer
         

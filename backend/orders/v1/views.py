@@ -4,8 +4,6 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 
-from django.shortcuts import get_object_or_404
-
 from orders.models import Cart, UserAddress, Order
 from products.models import Product
 from .serializers import CartSerializer
@@ -28,7 +26,7 @@ class CartView(RetrieveAPIView):
             user_cart = Cart.objects.create(user=request.user, is_paid=False)
 
         serializer = self.get_serializer(user_cart)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 class AddOrderView(APIView):
     permission_classes = [IsAuthenticated]
@@ -45,8 +43,11 @@ class AddOrderView(APIView):
             count = int(count)
         except (TypeError, ValueError):
             return Response({'message': 'Invalid data'}, status=status.HTTP_400_BAD_REQUEST)
-
-        product = get_object_or_404(Product, is_active=True, id=product_id)
+        
+        try:
+            product = Product.objects.get(is_active=True, id=product_id)
+        except Product.DoesNotExist:
+            return Response({'message': 'Product not found'}, status=status.HTTP_404_NOT_FOUND)
 
         if count <= 0:
             return Response({'message': 'Invalid quantity'}, status=status.HTTP_400_BAD_REQUEST)

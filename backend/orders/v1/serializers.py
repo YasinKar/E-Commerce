@@ -1,6 +1,7 @@
 from rest_framework import serializers
-from .models import Cart, Order, UserAddress, OfferCode
-from products.serializers import ProductSerializer
+
+from orders.models import Cart, Order, UserAddress, OfferCode
+from products.v1.serializers import ProductSerializer
 
 class OfferCodeSerializer(serializers.ModelSerializer):
     class Meta:

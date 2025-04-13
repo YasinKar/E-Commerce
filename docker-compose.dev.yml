@@ -5,11 +5,11 @@ services:
     image: redis:7.0.11-alpine
     container_name: redis
     networks:
-      - general_network
+      - main_network
     volumes:
       - redis_data:/data
     ports:
-      - "6379:6379"
+      - "6379"
 
   rabbitmq:
     image: rabbitmq:management
@@ -18,21 +18,24 @@ services:
       - "5672:5672"
       - "15672:15672"
     networks:
-      - general_network
+      - main_network
 
   db:
     image: postgres
     container_name: db
+    restart: on-failure
     environment:
       - POSTGRES_NAME=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+    env_file:
+      - ./backend/.env
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
     networks:
-      - general_network
+      - main_network
 
   pgadmin:
     container_name: pgadmin
@@ -45,7 +48,7 @@ services:
       - PGADMIN_DEFAULT_EMAIL=admin@example.com
       - PGADMIN_DEFAULT_PASSWORD=admin
     networks:
-      - general_network
+      - main_network
 
   backend:
     build:
@@ -76,7 +79,7 @@ services:
       - rabbitmq
       - db
     networks:
-      - general_network
+      - main_network
 
   celery:
     build:
@@ -105,7 +108,7 @@ services:
       - rabbitmq
       - backend
     networks:
-      - general_network
+      - main_network
 
   flower:
     image: mher/flower
@@ -115,7 +118,7 @@ services:
     environment:
       - CELERY_BROKER_URL=amqp://guest:guest@rabbitmq:5672/
     networks:
-      - general_network
+      - main_network
 
   frontend:
     container_name: frontend
@@ -129,7 +132,7 @@ services:
     environment:
       - API_URL=http://nginx/api/
     networks:
-      - general_network
+      - main_network
     depends_on:
       - backend
 
@@ -146,12 +149,12 @@ services:
       - backend
       - frontend
     networks:
-      - general_network
+      - main_network
 
 volumes:
   postgres_data:
   redis_data:
 
 networks:
-  general_network:
+  main_network:
     driver: bridge
