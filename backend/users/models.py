@@ -1,12 +1,12 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from .tasks import send_email_task
 from django.utils.crypto import get_random_string
 from django.core.exceptions import ValidationError
+from django.utils import timezone
 
 class User(AbstractUser):
-    auth_token = models.CharField(blank=True, null=True, max_length=300, unique=True, verbose_name='Auth Token')
-    email = models.EmailField(unique=True, verbose_name='Email')
+    auth_token = models.CharField(blank=True, null=True, max_length=80, unique=True, verbose_name='Auth Token')
+    email = models.EmailField(max_length=250, unique=True, verbose_name='Email')
     
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
@@ -24,25 +24,34 @@ class EmailChangeRequest(models.Model):
     new_email = models.EmailField(verbose_name='New email')
     confirmed = models.BooleanField(default=False, verbose_name='Confirmed')
     
+    def save(self, *args, **kwargs):
+        if not self.token:
+            self.token = get_random_string(length=72)
+        super().save(*args, **kwargs) 
+    
     def clean(self):
         if User.objects.filter(email=self.new_email).exists():
             raise ValidationError('This email address is already registered with another user.')
-    
-    def generate_token(self):
-        self.token = get_random_string(length=72)
-        self.save()
-
-    def send_confirmation_email(self, email_context):
-        send_email_task.delay(
-            subject='Confirm your email change',
-            to= self.new_email,
-            context=email_context,
-            template_name='email/email_change.html'
-        )
-    
-    def apply_email_change(self):
-        self.user.email = self.new_email
-        self.user.save()
 
     def __str__(self):
         return f'Email Change Request for {self.user.username} to {self.new_email}'
+    
+class OTP(models.Model):
+    email = models.CharField(max_length=250)
+    code = models.CharField(max_length=6)
+    is_used = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def is_valid(self):
+        return self.created_at >= timezone.now() - timezone.timedelta(minutes=2)
+
+    def generate_otp(self):
+        return get_random_string(5)
+    
+    def save(self, *args, **kwargs):
+        if not self.code:
+            self.code = self.generate_otp()
+        super().save(*args, **kwargs) 
+    
+    def __str__(self):
+        return f"{self.email} - {self.code}"

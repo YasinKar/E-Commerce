@@ -1,7 +1,13 @@
 from celery import shared_task
-from utils.email_service import send_email
+from backend.utils.email_service import send_email
 
-@shared_task(queue='tasks')
-def send_email_task(subject, to, context, template_name):
+@shared_task(queue='send_otp_email')
+def send_otp_email(subject, to, context, template_name):
     send_email(subject, to, context, template_name)
-    return f'email sent to {to}'
+    return f'OTP email sent to {to}'
+
+
+@shared_task(queue='send_confirmation_email')
+def send_confirmation_email(subject, to, context, template_name):
+    send_email(subject, to, context, template_name)
+    return f'confirmation email sent to {to}'

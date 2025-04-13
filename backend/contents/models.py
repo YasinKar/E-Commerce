@@ -1,6 +1,5 @@
 from django.db import models
 from django.core.validators import RegexValidator
-from django.conf import settings
 
 class SiteSetting(models.Model):
     domain = models.CharField(max_length=300, verbose_name='Domain')
@@ -53,8 +52,8 @@ class SiteSetting(models.Model):
     email = models.EmailField(max_length=200, verbose_name='Email', null=True, blank=True)
     phone = models.IntegerField(verbose_name='Phone', null=True, blank=True)
     copyright = models.CharField(max_length=200, verbose_name='Copyright', null=True, default='All right reserved ©')
-    maintenance_mode = models.BooleanField(default=False, verbose_name='Maintenance mode')
-    is_main_setting = models.BooleanField(default=False, verbose_name='Main setting')
+    maintenance_mode = models.BooleanField(default=False, verbose_name='Maintenance mode', db_index=True)
+    is_main_setting = models.BooleanField(default=False, verbose_name='Main setting', db_index=True)
      
     class Meta:
         verbose_name = 'Site Setting'

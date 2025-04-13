@@ -29,7 +29,16 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', '0') == '1'
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*').split(',')
+if DEBUG:
+    ALLOWED_HOSTS = ['*']
+else:
+    ALLOWED_HOSTS = [
+            f"localhost:{os.environ.get('DJANGO_PORT')}",
+             f"127.0.0.1:{os.environ.get('DJANGO_PORT')}", 
+             os.environ.get('BACKEND_HOST', cast=str), 
+             os.environ.get('BACKEND_DOMAIN', cast=str),
+             'backend'
+        ]
 
 
 # Application definition
@@ -68,7 +77,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     # internal middlewares
-    'contents.middleware.MaintenanceModeMiddleware',
+    'backend.middlewares.ratelimit_middleware.RateLimitMiddleware',
+    'backend.middlewares.maintenance_middleware.MaintenanceModeMiddleware',
     # external middlewares
     'corsheaders.middleware.CorsMiddleware',
     'axes.middleware.AxesMiddleware',
@@ -184,11 +194,22 @@ AXES_COOLOFF_TIME = 2
 
 AXES_LOG_ATTEMPT_LIMIT = 100
 
-# CORS_ORIGIN_ALLOW_ALL = True
+# CORS settings
+if DEBUG:
+    CORS_ORIGIN_ALLOW_ALL = True
+else:
+    CORS_ALLOWED_ORIGIN_REGEXES = [
+    rf"http:\/\/(\w+\.)?{os.environ.get('CORS_ALLOWED_ORIGINS')}$",
+    rf"https:\/\/(\w+\.)?{os.environ.get('CORS_ALLOWED_ORIGINS')}$",
+    rf"^https:\/\/(\w+\.)?{os.environ.get('BACKEND_DOMAIN')}$",
+    rf"^http:\/\/(\w+\.)?{os.environ.get('BACKEND_DOMAIN')}$"
+    ]
 
-CORS_ORIGIN_WHITELIST = os.environ.get('CORS_ORIGIN_WHITELIST').split(',')
+CORS_ALLOW_METHODS = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS']
+CORS_ALLOW_HEADERS = ['Content-Type', 'Authorization', 'accept', 'user-agent', 'x-csrftoken', 'x-requested-with']
+CORS_ALLOW_CREDENTIALS = True
 
-#email setting
+# Email settings
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
@@ -196,7 +217,27 @@ EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 EMAIL_PORT = 587
 
-#Jwt 
+# Caches settings
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": f"redis://{os.environ.get('REDIS_HOST')}:{os.environ.get('REDIS_PORT')}/0",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    },
+    "ratelimit": { 
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": f"redis://{os.environ.get('REDIS_HOST')}:{os.environ.get('REDIS_PORT')}/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    }
+}
+
+RATELIMIT_USE_CACHE = "ratelimit"
+
+#Jwt settings
 from datetime import timedelta
 
 SIMPLE_JWT = {
@@ -213,4 +254,40 @@ INTERNAL_IPS = [
 ]
 
 CELERY_BROKER_URL = os.environ.get('CELERY_BROKER', 'amqp://guest:guest@rabbitmq:5672/')
-CELERY_RESULT_BACKEND = os.environ.get('CELERY_BACKEND', 'redis://redis:6379/0')
+CELERY_RESULT_BACKEND = os.environ.get('CELERY_BACKEND', 'redis://redis:6379/3')
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+
+    'formatters': {
+        'verbose': {
+            'format': '[{levelname}] {asctime} {name} ({module}:{lineno}) - {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '[{levelname}] {message}',
+            'style': '{',
+        },
+    },
+
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple',
+        }
+    },
+
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'DEBUG' if DEBUG else 'INFO',
+            'propagate': True,
+        },
+        'django.request': {
+            'handlers': ['console'],
+            'level': 'ERROR',
+            'propagate': False,
+        }
+    }
+}

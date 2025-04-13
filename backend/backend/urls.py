@@ -21,13 +21,11 @@ from django.conf.urls.static import static
 from debug_toolbar.toolbar import debug_toolbar_urls
 
 urlpatterns = [
-    path('api/', include([
-        path('', include('products.urls')),
-        path('users/', include('users.urls')),
-        path('site/', include('contents.urls')),
-        path('cart/', include('orders.urls')),
-        path('dashboard/', include('dashboard.urls')),
-    ])),
+    path('', include('products.urls')),
+    path('users/', include('users.urls')),
+    path('site/', include('contents.urls')),
+    path('cart/', include('orders.urls')),
+    path('dashboard/', include('dashboard.urls')),
     path('admin/', admin.site.urls),
 ] + debug_toolbar_urls()
 

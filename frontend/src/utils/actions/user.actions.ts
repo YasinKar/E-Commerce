@@ -1,6 +1,7 @@
 'use server'
 
 import api from '@/utils/api/index'
+import { revalidatePath } from 'next/cache';
 
 export const signIn = async (email: string, password: string) => {
     const res = await api.post('users/token/', { email, password });
@@ -41,6 +42,7 @@ export const getUserMessages = async () => {
 
 export const deleteUserMessages = async () => {
     const res = await api.delete('dashboard/messages/delete/');
+    revalidatePath('/dashboard/messages')
     return res
 }
 

@@ -1,8 +1,8 @@
+import DeleteMessagesButton from '@/components/DeleteMessagesButton'
 import { Message } from '@/types/user.types'
 import { getUserMessages } from '@/utils/actions/user.actions'
-import { MessageSquare, Trash2 } from 'lucide-react'
+import { MessageSquare } from 'lucide-react'
 import Image from 'next/image'
-import Link from 'next/link'
 import React from 'react'
 
 const Messages = async () => {
@@ -16,10 +16,7 @@ const Messages = async () => {
             </h3>
             {
                 userMessages.length > 0 &&
-                <Link href={'/dashboard/messages/delete/'} className='p-2 bg-red-500 flex justify-center items-center rounded-lg text-white gap-1 w-36'>
-                    Delete All
-                    <Trash2 />
-                </Link>
+                <DeleteMessagesButton />
             }
             {
                 userMessages.length > 0 ?
