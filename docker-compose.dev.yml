@@ -3,33 +3,35 @@ version: '3.8'
 services:
   redis:
     image: redis:7.0.11-alpine
-    container_name: redis
+    container_name: Ecommerce_redis
     networks:
       - main_network
     volumes:
       - redis_data:/data
     ports:
       - "6379"
+    restart: on-failure
 
   rabbitmq:
     image: rabbitmq:management
-    container_name: rabbitmq
+    container_name: Ecommerce_rabbitmq
     ports:
       - "5672:5672"
       - "15672:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    restart: on-failure
     networks:
       - main_network
 
   db:
     image: postgres
-    container_name: db
+    container_name: Ecommerce_db
     restart: on-failure
     environment:
       - POSTGRES_NAME=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-    env_file:
-      - ./backend/.env
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
@@ -38,7 +40,7 @@ services:
       - main_network
 
   pgadmin:
-    container_name: pgadmin
+    container_name: Ecommerce_pgadmin
     image: dpage/pgadmin4
     depends_on:
       - db
@@ -54,26 +56,14 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: backend
+    container_name: Ecommerce_backend
     command: sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
     volumes:
       - ./backend:/app/
     ports:
       - "8000:8000"
-    environment:
-      - DEBUG=1
-      - SECRET_KEY=django-insecure-=$3m$a+_xy+sc8+5m8iw*tp=#8tr80mjlt89fy$io6+998lw2!
-      - ALLOWED_HOSTS=*
-      - POSTGRES_NAME=postgres
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_HOST=db
-      - POSTGRES_PORT=5432
-      - CORS_ORIGIN_WHITELIST=http://localhost:3000,http://localhost,http://api.localhost
-      - EMAIL_HOST_USER=email@email.com
-      - EMAIL_HOST_PASSWORD=email
-      - CELERY_BROKER=amqp://guest:guest@rabbitmq:5672/
-      - CELERY_BACKEND=redis://redis:6379/0
+    env_file:
+      - ./backend/.env
     depends_on:
       - redis
       - rabbitmq
@@ -85,24 +75,12 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: celery
-    command: celery --app=backend worker -l INFO -Q tasks
+    container_name: Ecommerce_celery
+    command: celery --app=backend worker -l INFO -Q send_otp_email,send_confirmation_email,send_welcome_email,send_notification
     volumes:
       - ./backend:/app/
-    environment:
-      - DEBUG=1
-      - SECRET_KEY=django-insecure-=$3m$a+_xy+sc8+5m8iw*tp=#8tr80mjlt89fy$io6+998lw2!
-      - ALLOWED_HOSTS=*
-      - POSTGRES_NAME=postgres
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_HOST=db
-      - POSTGRES_PORT=5432
-      - CORS_ORIGIN_WHITELIST=http://localhost:3000,http://localhost,http://api.localhost
-      - EMAIL_HOST_USER=email@email.com
-      - EMAIL_HOST_PASSWORD=email
-      - CELERY_BROKER=amqp://guest:guest@rabbitmq:5672/
-      - CELERY_BACKEND=redis://redis:6379/0
+    env_file:
+      - ./backend/.env
     depends_on:
       - redis
       - rabbitmq
@@ -112,7 +90,7 @@ services:
 
   flower:
     image: mher/flower
-    container_name: flower
+    container_name: Ecommerce_flower
     ports:
       - "5555:5555"
     environment:
@@ -121,7 +99,7 @@ services:
       - main_network
 
   frontend:
-    container_name: frontend
+    container_name: Ecommerce_frontend
     build:
       context: ./frontend
     volumes:
@@ -138,7 +116,7 @@ services:
 
   nginx:
     image: nginx:latest
-    container_name: nginx
+    container_name: Ecommerce_nginx
     ports:
       - "80:80"
     volumes:
@@ -154,6 +132,7 @@ services:
 volumes:
   postgres_data:
   redis_data:
+  rabbitmq_data:
 
 networks:
   main_network:

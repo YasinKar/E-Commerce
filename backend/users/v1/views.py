@@ -16,7 +16,7 @@ from .serializers import (
     ResetPasswordSerializer,
     OTPVerifySerializer
 )
-from users.tasks import send_otp_email, send_confirmation_email
+from users.tasks import send_otp_email, send_confirmation_email, send_welcome_email
 
 #### Authentication ####
 
@@ -40,8 +40,8 @@ class ForgotPasswordAPIView(GenericAPIView):
             send_confirmation_email.delay(
                 subject='Password Recovery',
                 to= user.email,
-                context={'user' : user},
-                template_name='email/reset_pass.html'
+                context={'email' : user.email, 'auth_token' : user.auth_token},
+                template_name='email/reset_password.html'
             )
             return Response({'message': 'An email with a password reset link has been sent to you.', 'email': email}, status=status.HTTP_200_OK)
         else:
@@ -103,7 +103,12 @@ class OTPRequestView(GenericAPIView):
         
         otp = OTP.objects.create(email=email)
         
-        send_otp_email.delay(email, otp.code)
+        send_otp_email.delay(
+            subject='Verify Code',
+            to=email,
+            context={'email' : otp.email},
+            template_name='email/otp.html'
+        )
         
         return Response({
             'message': 'OTP code has been sent.',
@@ -145,6 +150,13 @@ class OTPVerifyView(GenericAPIView):
         
         user.is_active = True
         user.save()
+        
+        send_welcome_email.delay(
+            subject='Welcome',
+            to=email,
+            context={'email' : otp.email},
+            template_name='email/welcome.html'
+        )
         
         return Response({
             'message': 'Email has been successfully verified.',

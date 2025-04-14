@@ -55,3 +55,7 @@ class OTP(models.Model):
     
     def __str__(self):
         return f"{self.email} - {self.code}"
+    
+    class Meta:
+        verbose_name = 'OTP'
+        verbose_name_plural = 'OTPs'

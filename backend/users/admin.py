@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import User, EmailChangeRequest
+from .models import User, EmailChangeRequest, OTP
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
@@ -14,3 +14,5 @@ class EmailChangeRequestAdmin(admin.ModelAdmin):
     list_display = ('user', 'new_email', 'confirmed')
     list_filter = ('confirmed', )
     search_fields = ('user', 'new_email')
+    
+admin.site.register(OTP)
