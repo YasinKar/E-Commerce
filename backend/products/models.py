@@ -23,11 +23,11 @@ class Category(models.Model):
         return self.name
     
     def save(self, *args, **kwargs):
-        if not self.pk:
-            super().save(*args, **kwargs)
-        self.slug = f"{self.name.replace(' ', '-')}_{self.pk}"
         super().save(*args, **kwargs)
-    
+        if not self.slug:
+            self.slug = f"{self.name.replace(' ', '-')}_{self.pk}"
+            super().save(update_fields=['slug'])
+
     class Meta:
         verbose_name = 'Category'
         verbose_name_plural = 'Categories'
@@ -49,10 +49,10 @@ class Brand(models.Model):
     is_active = models.BooleanField(verbose_name='Active', default=True)
     
     def save(self, *args, **kwargs):
-        if not self.pk:
-            super().save(*args, **kwargs)
-        self.slug = f"{self.name.replace(' ', '-')}_{self.pk}"
         super().save(*args, **kwargs)
+        if not self.slug:
+            self.slug = f"{self.name.replace(' ', '-')}_{self.pk}"
+            super().save(update_fields=['slug'])
         
     class Meta:
         verbose_name = 'Brand'
@@ -119,8 +119,6 @@ class Product(models.Model):
     is_active = models.BooleanField(verbose_name='Active', default=True)
     
     def save(self, *args, **kwargs):
-        if not self.pk:
-            super().save(*args, **kwargs)
         self.slug = f"{self.name.replace(' ', '-')}_{self.pk}"
         super().save(*args, **kwargs)
         
