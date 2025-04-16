@@ -2,11 +2,12 @@
 
 import api from '@/utils/api/index'
 import { unstable_cache } from "next/cache";
+import { API_BASE_URL } from '../api/http';
 
 export const getSettings = unstable_cache(
     async () => {
-        const settings = await api.get('site/api/v1/settings/');
-        return settings;
+        const settings = await fetch(`${API_BASE_URL}site/api/v1/settings/`);
+        return settings.json();
     },
     ['settings'],
     { revalidate: 3600, tags: ['settings'] }
@@ -19,8 +20,8 @@ export const getBanners = async () => {
 
 export const getFAQ = unstable_cache(
     async () => {
-        const FAQ = await api.get('site/api/v1/FAQ/');
-        return FAQ;
+        const FAQ = await fetch(`${API_BASE_URL}site/api/v1/FAQ/`);
+        return FAQ.json();
     },
     ['FAQ'],
     { revalidate: 3600, tags: ['FAQ'] }
@@ -28,8 +29,8 @@ export const getFAQ = unstable_cache(
 
 export const getElectronicSymbols = unstable_cache(
     async () => {
-        const ElectronicSymbols = await api.get('site/api/v1/electronic-symbols/');
-        return ElectronicSymbols;
+        const ElectronicSymbols = await fetch(`${API_BASE_URL}site/api/v1/electronic-symbols/`);
+        return ElectronicSymbols.json();
     },
     ['ElectronicSymbols'],
     { revalidate: 3600, tags: ['ElectronicSymbols'] }

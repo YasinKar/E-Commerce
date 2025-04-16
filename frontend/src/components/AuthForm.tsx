@@ -1,14 +1,13 @@
 'use client'
 
 import { AuthContext, AuthContextType } from '@/context/AuthContext'
-import { register, signIn } from '@/utils/actions/user.actions'
+import { register, requestOTP, signIn } from '@/utils/actions/user.actions'
 import { setCookie } from 'cookies-next'
 import { jwtDecode } from 'jwt-decode'
 import { LoaderCircle } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import React, { FormEvent, useContext, useState } from 'react'
-import Swal from 'sweetalert2'
 
 const AuthForm = ({ type }: { type: 'login' | 'register' }) => {
     const router = useRouter()
@@ -41,12 +40,8 @@ const AuthForm = ({ type }: { type: 'login' | 'register' }) => {
                 const confirmPassword = formData.get('confirmPassword') as string
 
                 await register(email, username, password, confirmPassword)
-                Swal.fire({
-                    title: 'Confirm Email Sent !',
-                    text: 'We just sent a confirm email to you.please check your emails.',
-                    icon: 'success',
-                    confirmButtonText: 'Done'
-                })
+                await requestOTP(email)
+                router.push(`/verify-email?email=${email}`)
             }
         } catch (error: any) {
             setError(error?.message)

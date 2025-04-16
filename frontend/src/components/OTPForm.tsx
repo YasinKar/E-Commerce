@@ -1,16 +1,25 @@
 'use client'
 
+import { verifyEmail } from '@/utils/actions/user.actions'
 import { LoaderCircle } from 'lucide-react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import React, { useRef, useState } from 'react'
+import Swal from 'sweetalert2'
 
 const OTP_LENGTH = 5
 
-const OTPForm = () => {
+type OTPProps = {
+  email: string
+}
+
+const OTPForm: React.FC<OTPProps> = ({ email }) => {
   const [otp, setOtp] = useState(Array(OTP_LENGTH).fill(''))
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [error, setError] = useState<string | null>(null)
   const inputRefs = useRef<HTMLInputElement[]>([])
+
+  const router = useRouter()
 
   const handleChange = (value: string, index: number) => {
     if (!/^[0-9a-zA-Z]?$/.test(value)) return
@@ -30,7 +39,7 @@ const OTPForm = () => {
     }
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
     setError(null)
@@ -41,9 +50,14 @@ const OTPForm = () => {
       setError('Please fill all fields.')
     }
 
-    setIsLoading(false)
-    console.log('OTP Code:', code)
-
+    try {
+      const res = await verifyEmail(email, code)
+      router.push('/login')
+    } catch (error: any) {
+      setError(error?.message)
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
