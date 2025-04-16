@@ -108,7 +108,7 @@ services:
       - "3000:3000"
     command: npm run dev
     environment:
-      - API_URL=http://nginx/api/
+      - API_URL=http://nginx:8000/
     networks:
       - main_network
     depends_on:

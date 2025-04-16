@@ -67,13 +67,16 @@ const Footer: React.FC<FooterProps> = ({ electronicSymbols, settings }) => {
                     </div>
                     <div >
                         <ul className='flex flex-wrap justify-around items-center'>
-                            {electronicSymbols.map(electronicSymbol => (
-                                <li className="mb-4" key={electronicSymbol.id}>
-                                    <Link href={electronicSymbol.url} className="hover:underline">
-                                        <Image alt='electronicSymbol' src={electronicSymbol.image} height={200} width={200} />
-                                    </Link>
-                                </li>
-                            ))}
+                            {
+                                electronicSymbols &&
+                                electronicSymbols.map(electronicSymbol => (
+                                    <li className="mb-4" key={electronicSymbol.id}>
+                                        <Link href={electronicSymbol.url} className="hover:underline">
+                                            <Image alt='electronicSymbol' src={electronicSymbol.image} height={200} width={200} />
+                                        </Link>
+                                    </li>
+                                ))
+                            }
                         </ul>
                     </div>
                 </div>

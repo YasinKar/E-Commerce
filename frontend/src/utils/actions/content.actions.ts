@@ -5,7 +5,7 @@ import { unstable_cache } from "next/cache";
 
 export const getSettings = unstable_cache(
     async () => {
-        const settings = await api.get('site/settings/');
+        const settings = await api.get('site/api/v1/settings/');
         return settings;
     },
     ['settings'],
@@ -13,13 +13,13 @@ export const getSettings = unstable_cache(
 )
 
 export const getBanners = async () => {
-    const banners = await api.get('site/banners/')
+    const banners = await api.get('site/api/v1/banners/')
     return banners
 }
 
 export const getFAQ = unstable_cache(
     async () => {
-        const FAQ = await api.get('site/FAQ/');
+        const FAQ = await api.get('site/api/v1/FAQ/');
         return FAQ;
     },
     ['FAQ'],
@@ -28,7 +28,7 @@ export const getFAQ = unstable_cache(
 
 export const getElectronicSymbols = unstable_cache(
     async () => {
-        const ElectronicSymbols = await api.get('site/electronic-symbols/');
+        const ElectronicSymbols = await api.get('site/api/v1/electronic-symbols/');
         return ElectronicSymbols;
     },
     ['ElectronicSymbols'],
@@ -36,6 +36,6 @@ export const getElectronicSymbols = unstable_cache(
 )
 
 export const ContactUs = async (fullName: string, email: string, title: string, message: string) => {
-    const contact = await api.post('site/contact-us/', { full_name: fullName, email, title, message })
+    const contact = await api.post('site/api/v1/contact-us/', { full_name: fullName, email, title, message })
     return contact
 }

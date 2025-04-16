@@ -19,22 +19,25 @@ const FAQ: React.FC<FAQProps> = ({ faq }) => {
         <section className='section'>
             <h2 className='title'>FAQ & Help</h2>
             <div className="w-full divide-y">
-                {faq.map((item, index) => (
-                    <div key={item.id} >
-                        <button
-                            className="w-full flex justify-between items-center p-4 bg-white text-black font-medium focus:outline-none"
-                            onClick={() => toggleAccordion(index)}
-                        >
-                            <span>{item.question}</span>
-                            <ChevronRight className={`${activeIndex === index ? 'rotate-90' : ''} transition-all`} />
-                        </button>
-                        <div className={`overflow-hidden transition-max-height duration-300 ease-in-out ${activeIndex === index ? "max-h-[500px]" : "max-h-0"}`}>
-                            <div className='px-4 py-2 bg-white text-gray-600 '>
-                                {item.answer}
+                {
+                    faq &&
+                    faq.map((item, index) => (
+                        <div key={item.id} >
+                            <button
+                                className="w-full flex justify-between items-center p-4 bg-white text-black font-medium focus:outline-none"
+                                onClick={() => toggleAccordion(index)}
+                            >
+                                <span>{item.question}</span>
+                                <ChevronRight className={`${activeIndex === index ? 'rotate-90' : ''} transition-all`} />
+                            </button>
+                            <div className={`overflow-hidden transition-max-height duration-300 ease-in-out ${activeIndex === index ? "max-h-[500px]" : "max-h-0"}`}>
+                                <div className='px-4 py-2 bg-white text-gray-600 '>
+                                    {item.answer}
+                                </div>
                             </div>
                         </div>
-                    </div>
-                ))}
+                    ))
+                }
             </div>
         </section>
     )

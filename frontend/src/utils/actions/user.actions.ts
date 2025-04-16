@@ -4,17 +4,27 @@ import api from '@/utils/api/index'
 import { revalidatePath } from 'next/cache';
 
 export const signIn = async (email: string, password: string) => {
-    const res = await api.post('users/token/', { email, password });
+    const res = await api.post('users/api/v1/token/', { email, password });
     return res;
 }
 
 export const register = async (email: string, username: string, password: string, confirmPassword: string) => {
-    const res = await api.post('users/register/', { email, username, password, confirm_password: confirmPassword });
+    const res = await api.post('users/api/v1/register/', { email, username, password, confirm_password: confirmPassword });
+    return res
+}
+
+export const requestOTP = async (email: string) => {
+    const res = await api.post('users/api/v1/request-otp/', { email });
+    return res
+}
+
+export const verifyEmail = async (email: string, code: string) => {
+    const res = await api.post('users/api/v1/verify-otp/', { email, code });
     return res
 }
 
 export const getUser = async () => {
-    const user = await api.get('dashboard/');
+    const user = await api.get('dashboard/api/v1/');
     return user.user
 }
 
@@ -24,7 +34,7 @@ export const updateUser = async (
     username: string,
     email: string
 ) => {
-    const user = await api.put('dashboard/', {
+    const user = await api.put('dashboard/api/v1/', {
         first_name: firstName,
         last_name: lastName,
         username,
@@ -36,23 +46,23 @@ export const updateUser = async (
 }
 
 export const getUserMessages = async () => {
-    const messages = await api.get('dashboard/messages');
+    const messages = await api.get('dashboard/api/v1/messages');
     return messages
 }
 
 export const deleteUserMessages = async () => {
-    const res = await api.delete('dashboard/messages/delete/');
+    const res = await api.delete('dashboard/api/v1/messages/delete/');
     revalidatePath('/dashboard/messages')
     return res
 }
 
 export const getUserOrders = async (status: 'delivered' | 'processing' | 'out_for_delivery' | 'pending_payment' | null = null) => {
-    const orders = await api.get(`dashboard/orders${status ? '?status=' + status : ''}`);
+    const orders = await api.get(`dashboard/api/v1/orders${status ? '?status=' + status : ''}`);
     return orders
 }
 
 export const getUserAddresses = async () => {
-    const addresses = await api.get('dashboard/addresses');
+    const addresses = await api.get('dashboard/api/v1/addresses');
     return addresses
 }
 
@@ -66,7 +76,7 @@ export const addAddress = async (
     latitude: string,
     longitude: string
 ) => {
-    const address = await api.post('dashboard/add-address', {
+    const address = await api.post('dashboard/api/v1/add-address', {
         receiver_first_name: receiverFirstName,
         receiver_last_name: receiverLastName,
         receiver_phone: receiverPhone,
@@ -90,7 +100,7 @@ export const updateAddress = async (
     latitude: string,
     longitude: string
 ) => {
-    const address = await api.put(`dashboard/address/${id}`, {
+    const address = await api.put(`dashboard/api/v1/address/${id}`, {
         receiver_first_name: receiverFirstName,
         receiver_last_name: receiverLastName,
         receiver_phone: receiverPhone,
@@ -104,16 +114,16 @@ export const updateAddress = async (
 }
 
 export const getAddress = async (id: number) => {
-    const address = await api.get(`dashboard/address/${id}`);
+    const address = await api.get(`dashboard/api/v1/address/${id}`);
     return address
 }
 
 export const deleteAddress = async (id: number) => {
-    const address = await api.delete(`dashboard/address/${id}`);
+    const address = await api.delete(`dashboard/api/v1/address/${id}`);
     return address
 }
 
 export const changeUserEmail = async (token: number) => {
-    const res = await api.delete(`dashboard/change-email/${token}`);
+    const res = await api.delete(`dashboard/api/v1/change-email/${token}`);
     return res
 }
