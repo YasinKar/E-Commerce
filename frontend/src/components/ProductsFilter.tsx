@@ -31,15 +31,15 @@ const ProductsFilter: React.FC<ProductsFilterProps> = ({ brands, categories, col
 
   const query = `?page=1${filters.category ? `&category=${filters.category}` : ''}${filters.brand ? `&brand=${filters.brand}` : ''}${filters.color ? `&color=${filters.color}` : ''}${filters.size ? `&size=${filters.size}` : ''}${filters.on_sale ? `&on_sale=${filters.on_sale}` : ''}${filters.gender ? `&gender=${filters.gender}` : ''}${filters.min_price ? `&min_price=${filters.min_price}` : ''}${filters.max_price ? `&max_price=${filters.max_price}` : ''}`
 
-  const handleMinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = Math.min(Number(e.target.value), filters.max_price - 1);
-    setFilters(prev => ({ ...prev, min_price: value }));
-  };
+  // const handleMinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const value = Math.min(Number(e.target.value), filters.max_price - 1);
+  //   setFilters(prev => ({ ...prev, min_price: value }));
+  // };
 
-  const handleMaxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = Math.max(Number(e.target.value), filters.min_price + 1);
-    setFilters(prev => ({ ...prev, max_price: value }));
-  };
+  // const handleMaxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const value = Math.max(Number(e.target.value), filters.min_price + 1);
+  //   setFilters(prev => ({ ...prev, max_price: value }));
+  // };
 
   const [activeIndex, setActiveIndex] = useState<string | null>(null);
 

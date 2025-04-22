@@ -5,7 +5,6 @@ import { LoaderCircle } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import React, { useRef, useState } from 'react'
-import Swal from 'sweetalert2'
 
 const OTP_LENGTH = 5
 
@@ -51,7 +50,7 @@ const OTPForm: React.FC<OTPProps> = ({ email }) => {
     }
 
     try {
-      const res = await verifyEmail(email, code)
+      await verifyEmail(email, code)
       router.push('/login')
     } catch (error: any) {
       setError(error?.message)
@@ -94,7 +93,7 @@ const OTPForm: React.FC<OTPProps> = ({ email }) => {
       </button>
 
       <Link href='/forgot-password' className="link text-center flex justify-center">
-        Didn't receive code? Resend
+        Didn&apos;t receive code? Resend
       </Link>
     </form>
   )

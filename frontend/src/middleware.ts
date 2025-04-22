@@ -101,6 +101,7 @@ function redirectToLogin(req: NextRequest) {
 }
 
 function clearAuthCookies(req: NextRequest) {
+  console.log(req);
   const res = NextResponse.next();
   res.cookies.delete('authTokens');
   return res;

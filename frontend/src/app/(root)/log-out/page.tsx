@@ -5,16 +5,16 @@ import { AuthContext, AuthContextType } from '@/context/AuthContext'
 import { useRouter } from 'next/navigation';
 import React, { useContext, useEffect } from 'react'
 
-const page = () => {
+const Logout = () => {
     const { signOut } = useContext(AuthContext) as AuthContextType;
     const router = useRouter();
 
     useEffect(() => {
         signOut()
         router.push('/');
-    }, []);
+    }, [signOut, router]);
 
     return <Loading />
 }
 
-export default page
+export default Logout
