@@ -33,12 +33,12 @@ if DEBUG:
     ALLOWED_HOSTS = ['*']
 else:
     ALLOWED_HOSTS = [
-            f"localhost:{os.environ.get('DJANGO_PORT')}",
-             f"127.0.0.1:{os.environ.get('DJANGO_PORT')}", 
-             os.environ.get('BACKEND_HOST'), 
-             os.environ.get('BACKEND_DOMAIN'),
-             'backend'
-        ]
+        f"localhost:{os.environ.get('DJANGO_PORT')}",
+        f"127.0.0.1:{os.environ.get('DJANGO_PORT')}", 
+        os.environ.get('BACKEND_HOST'), 
+        os.environ.get('BACKEND_DOMAIN'),
+        'backend'
+    ]
 
 
 # Application definition

@@ -22,10 +22,10 @@ const CartItem: React.FC<CartItemProps> = ({ order }) => {
                 icon: 'success',
                 confirmButtonText: 'Done'
             })
-        } catch (error: any) {
+        } catch (error: unknown) {
             Swal.fire({
                 title: 'Unsuccessful',
-                text: error?.message,
+                text: error instanceof Error ? error.message : 'An unexpected error occurred',
                 icon: 'error',
                 confirmButtonText: 'Done'
             })
@@ -41,10 +41,10 @@ const CartItem: React.FC<CartItemProps> = ({ order }) => {
                 icon: 'success',
                 confirmButtonText: 'Done'
             })
-        } catch (error: any) {
+        } catch (error: unknown) {
             Swal.fire({
                 title: 'Unsuccessful',
-                text: error?.message,
+                text: error instanceof Error ? error.message : 'An unexpected error occurred',
                 icon: 'error',
                 confirmButtonText: 'Done'
             })

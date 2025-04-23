@@ -43,8 +43,12 @@ const AuthForm = ({ type }: { type: 'login' | 'register' }) => {
                 await requestOTP(email)
                 router.push(`/verify-email?email=${email}`)
             }
-        } catch (error: any) {
-            setError(error?.message)
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                setError(error.message)
+            } else {
+                setError('An unexpected error occurred')
+            }
         } finally {
             setIsLoading(false)
         }

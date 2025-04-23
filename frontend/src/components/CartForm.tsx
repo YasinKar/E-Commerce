@@ -33,8 +33,12 @@ const CartForm: React.FC<CartFormProps> = ({ addresses, cart }) => {
                 icon: 'success',
                 confirmButtonText: 'Done'
             })
-        } catch (error: any) {
-            setError(error?.message)
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                setError(error.message)
+            } else {
+                setError('An unexpected error occurred')
+            }
         } finally {
             setIsLoading(false)
         }

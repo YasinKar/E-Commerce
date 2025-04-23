@@ -1,12 +1,27 @@
+'use client'
+
 import { Address as AddressType } from '@/types/user.types'
 import { getUserAddresses } from '@/utils/actions/user.actions'
 import { MapPin, Pencil, Trash2 } from 'lucide-react'
 import Image from 'next/image'
-import React from 'react'
+import { notFound } from 'next/navigation'
+import React, { useEffect, useState } from 'react'
 
-const Address = async () => {
-    const userAddresses = await getUserAddresses() as AddressType[]
-    console.log(userAddresses);
+const Address = () => {
+    const [addresses, setAddresses] = useState<AddressType[] | null>(null)
+
+    useEffect(() => {
+        const fetchAddresses = async () => {
+            const addresses = await getUserAddresses()
+            setAddresses(addresses)
+        }
+
+        fetchAddresses()
+    }, [])
+
+    if (!addresses) {
+        notFound()
+    }
 
     return (
         <div className='space-y-5'>
@@ -15,10 +30,10 @@ const Address = async () => {
                 Addresses
             </h3>
             {
-                userAddresses.length > 0 ?
+                addresses.length > 0 ?
                     <ul className='space-y-3 divide-y'>
                         {
-                            userAddresses.map(address => (
+                            addresses.map(address => (
                                 <li key={address.id} className='border border-sky-500 p-2 rounded-lg'>
                                     <div className='flex justify-between'>
                                         <p className='flex items-center gap-2 text'><MapPin className='text-red-500 size-7' /> {address.receiver_first_name} {address.receiver_last_name}</p>

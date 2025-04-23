@@ -23,10 +23,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                 icon: 'success',
                 confirmButtonText: 'Done'
             })
-        } catch (error: any) {
+        } catch (error: unknown) {
             Swal.fire({
                 title: 'Unsuccessful',
-                text: error?.message,
+                text: error instanceof Error ? error.message : 'An unexpected error occurred',
                 icon: 'error',
                 confirmButtonText: 'Done'
             })

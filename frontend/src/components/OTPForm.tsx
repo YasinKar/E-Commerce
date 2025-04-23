@@ -3,22 +3,27 @@
 import { verifyEmail } from '@/utils/actions/user.actions'
 import { LoaderCircle } from 'lucide-react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import React, { useRef, useState } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation';
+
 
 const OTP_LENGTH = 5
 
-type OTPProps = {
-  email: string
-}
 
-const OTPForm: React.FC<OTPProps> = ({ email }) => {
+const OTPForm = () => {
+  const router = useRouter()
+
+  const searchParams = useSearchParams()
+  const email = searchParams.get('email')!
+
+  if (!email) {
+      router.push('/register');
+  }
+
   const [otp, setOtp] = useState(Array(OTP_LENGTH).fill(''))
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [error, setError] = useState<string | null>(null)
   const inputRefs = useRef<HTMLInputElement[]>([])
-
-  const router = useRouter()
 
   const handleChange = (value: string, index: number) => {
     if (!/^[0-9a-zA-Z]?$/.test(value)) return
@@ -52,8 +57,13 @@ const OTPForm: React.FC<OTPProps> = ({ email }) => {
     try {
       await verifyEmail(email, code)
       router.push('/login')
-    } catch (error: any) {
-      setError(error?.message)
+    }
+    catch (error: unknown) {
+      if (error instanceof Error) {
+        setError(error.message)
+      } else {
+        setError('An unexpected error occurred')
+      }
     } finally {
       setIsLoading(false)
     }

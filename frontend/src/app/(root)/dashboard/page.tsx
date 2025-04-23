@@ -1,10 +1,27 @@
-; import { getUser } from '@/utils/actions/user.actions';
+'use client'
+
+import { User as UserType } from '@/types/user.types';
+import { getUser } from '@/utils/actions/user.actions';
 import { CalendarDays, Clock3, IdCard, Lock, MessageSquare, PackageCheck, ShieldCheck, Truck, User } from 'lucide-react';
 import Link from 'next/link';
-import React from 'react'
+import { notFound } from 'next/navigation';
+import React, { useEffect, useState } from 'react'
 
-const Dashboard = async () => {
-    const user = await getUser()
+const Dashboard = () => {
+    const [user, setUser] = useState<UserType | null>(null)
+
+    useEffect(() => {
+        const fetchUser = async () => {
+            const user = await getUser()
+            setUser(user)
+        }
+
+        fetchUser()
+    }, [])
+
+    if (!user) {
+        notFound()
+    }
 
     return (
         <div className='space-y-10'>

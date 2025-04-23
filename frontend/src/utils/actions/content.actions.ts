@@ -6,7 +6,7 @@ import { API_BASE_URL } from '../api/http';
 
 export const getSettings = unstable_cache(
     async () => {
-        const settings = await fetch(`${API_BASE_URL}site/api/v1/settings/`);
+        const settings = await fetch(`${API_BASE_URL}site/v1/settings/`);
         return settings.json();
     },
     ['settings'],
@@ -14,13 +14,13 @@ export const getSettings = unstable_cache(
 )
 
 export const getBanners = async () => {
-    const banners = await api.get('site/api/v1/banners/')
+    const banners = await api.get('site/v1/banners/')
     return banners
 }
 
 export const getFAQ = unstable_cache(
     async () => {
-        const FAQ = await fetch(`${API_BASE_URL}site/api/v1/FAQ/`);
+        const FAQ = await fetch(`${API_BASE_URL}site/v1/FAQ/`);
         return FAQ.json();
     },
     ['FAQ'],
@@ -29,7 +29,7 @@ export const getFAQ = unstable_cache(
 
 export const getElectronicSymbols = unstable_cache(
     async () => {
-        const ElectronicSymbols = await fetch(`${API_BASE_URL}site/api/v1/electronic-symbols/`);
+        const ElectronicSymbols = await fetch(`${API_BASE_URL}site/v1/electronic-symbols/`);
         return ElectronicSymbols.json();
     },
     ['ElectronicSymbols'],
@@ -37,6 +37,6 @@ export const getElectronicSymbols = unstable_cache(
 )
 
 export const ContactUs = async (fullName: string, email: string, title: string, message: string) => {
-    const contact = await api.post('site/api/v1/contact-us/', { full_name: fullName, email, title, message })
+    const contact = await api.post('site/v1/contact-us/', { full_name: fullName, email, title, message })
     return contact
 }

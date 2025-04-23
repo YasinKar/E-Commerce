@@ -1,8 +1,26 @@
-import DashboardSidebar from "@/components/DashboardSidebar";
-import { getUser } from "@/utils/actions/user.actions";
+'use client'
 
-export default async function Layout({ children, }: Readonly<{ children: React.ReactNode; }>) {
-    const user = await getUser()
+import DashboardSidebar from "@/components/DashboardSidebar";
+import { User } from "@/types/user.types";
+import { getUser } from "@/utils/actions/user.actions";
+import { notFound } from "next/navigation";
+import { useEffect, useState } from "react";
+
+export default function Layout({ children, }: Readonly<{ children: React.ReactNode; }>) {
+    const [user, setUser] = useState<User | null>(null)
+
+    useEffect(() => {
+        const fetchUser = async () => {
+            const user = await getUser()
+            setUser(user)
+        }
+
+        fetchUser()
+    }, [])
+
+    if (!user) {
+        notFound()
+    }
 
     return (
         <div className='flex'>

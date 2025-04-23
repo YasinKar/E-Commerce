@@ -56,6 +56,8 @@ services:
       dockerfile: Dockerfile
     container_name: Ecommerce_backend
     command: sh -c "python manage.py migrate && gunicorn backend.wsgi:application --bind 0.0.0.0:8000"
+    volumes:
+      - ./backend:/app/
     expose:
       - "8000"
     env_file:
@@ -75,6 +77,8 @@ services:
     command: celery --app=backend worker -l INFO -Q send_otp_email,send_confirmation_email,send_welcome_email,send_notification
     env_file:
       - ./backend/.env
+    volumes:
+      - ./backend:/app/
     depends_on:
       - redis
       - rabbitmq
@@ -88,6 +92,8 @@ services:
       context: ./frontend
     expose:
       - "3000"
+    volumes:
+      - ./frontend:/app
     command: sh -c "npm run build && npm start"
     environment:
       - API_URL=http://nginx/api/

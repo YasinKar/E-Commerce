@@ -1,12 +1,28 @@
+'use client'
+
 import DeleteMessagesButton from '@/components/DeleteMessagesButton'
 import { Message } from '@/types/user.types'
 import { getUserMessages } from '@/utils/actions/user.actions'
 import { MessageSquare } from 'lucide-react'
 import Image from 'next/image'
-import React from 'react'
+import { notFound } from 'next/navigation'
+import React, { useEffect, useState } from 'react'
 
-const Messages = async () => {
-    const userMessages: Message[] = await getUserMessages()
+const Messages = () => {
+    const [message, setMessages] = useState<Message[] | null>(null)
+
+    useEffect(() => {
+        const fetchMessages = async () => {
+            const messages = await getUserMessages()
+            setMessages(messages)
+        }
+
+        fetchMessages()
+    }, [])
+
+    if (!message) {
+        notFound()
+    }
 
     return (
         <div className='space-y-5'>
@@ -15,14 +31,14 @@ const Messages = async () => {
                 Messages
             </h3>
             {
-                userMessages.length > 0 &&
+                message.length > 0 &&
                 <DeleteMessagesButton />
             }
             {
-                userMessages.length > 0 ?
+                message.length > 0 ?
                     <ul className='space-y-3 divide-y'>
                         {
-                            userMessages.map(message => (
+                            message.map(message => (
                                 <li key={message.id} className='p-5'>
                                     <h4 className='text-black font-medium text-sm lg:text-lg flex items-center gap-2'><MessageSquare />{message.title}</h4>
                                     <p>{message.message}</p>

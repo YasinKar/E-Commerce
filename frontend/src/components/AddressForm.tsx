@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+// import React, { useState } from 'react'
 
 const AddressForm = () => {
     // const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -15,8 +15,12 @@ const AddressForm = () => {
     //         const formData = new FormData(event.currentTarget)
     //         const email = formData.get('email') as string
     //         const password = formData.get('password') as string
-    //     } catch (error: any) {
-    //         setError(error?.message)
+    //     } catch (error: unknown) {
+    //         if (error instanceof Error) {
+    //             setError(error.message)
+    //         } else {
+    //             setError('An unexpected error occurred')
+    //         }
     //     } finally {
     //         setIsLoading(false)
     //     }

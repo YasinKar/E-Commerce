@@ -1,11 +1,28 @@
+'use client'
+
 import AccountForm from '@/components/AccountForm'
+import { User } from '@/types/user.types'
 import { getUser } from '@/utils/actions/user.actions'
-import React from 'react'
+import { notFound } from 'next/navigation'
+import React, { useEffect, useState } from 'react'
 
-const Account = async () => {
-    const user = await getUser()
+const Account = () => {
+    const [user, setUser] = useState<User | null>(null)
 
-    return <AccountForm user={user}/>
+    useEffect(() => {
+        const fetchUser = async () => {
+            const user = await getUser()
+            setUser(user)
+        }
+
+        fetchUser()
+    }, [])
+
+    if (!user) {
+        notFound()
+    }
+
+    return <AccountForm user={user} />
 }
 
 export default Account

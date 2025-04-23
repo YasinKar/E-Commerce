@@ -9,17 +9,33 @@ import { getBanners, getFAQ, getSettings } from "@/utils/actions/content.actions
 import { getBrands, getCategories, getProducts } from "@/utils/actions/product.actions";
 
 export default async function Home() {
-  const banners = await getBanners()
+  let banners = []
+  let products = { results: [] }
+  let categories = []
+  let brands = []
+  let faq = []
+  let settings = []
 
-  const products = await getProducts()
+  try {
+    const results = await Promise.allSettled([
+      getBanners(),
+      getProducts(),
+      getCategories(),
+      getBrands(),
+      getFAQ(),
+      getSettings(),
+    ]);
 
-  const categories = await getCategories()
-
-  const brands = await getBrands()
-
-  const faq = await getFAQ()
-
-  const settings = await getSettings();
+    if (results[0].status === "fulfilled") banners = results[0].value;
+    if (results[1].status === "fulfilled") products = results[1].value;
+    if (results[2].status === "fulfilled") categories = results[2].value;
+    if (results[3].status === "fulfilled") brands = results[3].value;
+    if (results[4].status === "fulfilled") faq = results[4].value;
+    if (results[5].status === "fulfilled") settings = results[5].value;
+  } catch (err) {
+    console.error("Error in homepage data fetch:", err);
+    // optionally show fallback UI
+  }
 
   return (
     <main className="container relative my-8 space-y-10 z-10">
